@@ -590,4 +590,434 @@ export const aiService = {
   },
 }
 
+// Roadmap Services
+export const roadmapService = {
+  getUserRoadmaps: async (userId) => {
+    return await apiCallWithFallback(
+      () => api.get(`/roadmap/user/${userId}`),
+      async () => {
+        console.log('🗂️ Direct fallback: get user roadmaps')
+        const roadmaps = JSON.parse(localStorage.getItem('ai-roadmap-roadmaps') || '[]')
+        const safeRoadmaps = Array.isArray(roadmaps) ? roadmaps : []
+        return { data: safeRoadmaps }
+      }
+    )
+  },
+
+  getRoadmap: async (roadmapId) => {
+    const response = await api.get(`/roadmap/${roadmapId}`)
+    return response.data
+  },
+
+  updateProgress: async (roadmapId, moduleId, taskId, completed, timeSpent) => {
+    const response = await api.put(`/roadmap/${roadmapId}/progress`, {
+      moduleId,
+      taskId,
+      completed,
+      timeSpent,
+    })
+    return response.data
+  },
+
+  forkRoadmap: async (roadmapId, userId) => {
+    const response = await api.post(`/roadmap/${roadmapId}/fork`, { userId })
+    return response.data
+  },
+
+  getPublicRoadmaps: async (page = 1, limit = 10, category, difficulty) => {
+    const response = await api.get('/roadmap/public/browse', {
+      params: { page, limit, category, difficulty },
+    })
+    return response.data
+  },
+
+  updateVisibility: async (roadmapId, isPublic) => {
+    const response = await api.put(`/roadmap/${roadmapId}/visibility`, { isPublic })
+    return response.data
+  },
+
+  likeRoadmap: async (roadmapId, userId, action) => {
+    const response = await api.post(`/roadmap/${roadmapId}/like`, { userId, action })
+    return response.data
+  },
+
+  deleteRoadmap: async (roadmapId, userId) => {
+    const response = await api.delete(`/roadmap/${roadmapId}`, { data: { userId } })
+    return response.data
+  },
+}
+
+// Auth Services
+export const authService = {
+  syncUser: async (supabaseId, email, name, profileImage) => {
+    return await apiCallWithFallback(
+      () => api.post('/auth/sync', { supabaseId, email, name, profileImage }),
+      async () => {
+        console.log('🔐 Direct fallback: auth sync')
+        const userData = {
+          success: true,
+          user: {
+            id: supabaseId,
+            supabaseId: supabaseId,
+            email: email,
+            name: name,
+            profileImage: profileImage || '',
+            stats: getInitialUserStats()
+          }
+        }
+        localStorage.setItem('ai-roadmap-user', JSON.stringify(userData.user))
+        return { data: userData }
+      }
+    )
+  },
+
+  getProfile: async (supabaseId) => {
+    return await apiCallWithFallback(
+      () => api.get(`/auth/profile/${supabaseId}`),
+      async () => {
+        console.log('👤 Direct fallback: get profile')
+        const storedUser = getStoredUser()
+        const profile = JSON.parse(localStorage.getItem('ai-roadmap-profile') || '{}')
+
+        const response = {
+          name: storedUser?.name || '',
+          email: storedUser?.email || '',
+          bio: profile.bio || '',
+          location: profile.location || '',
+          githubUsername: profile.githubUsername || '',
+          twitterUsername: profile.twitterUsername || '',
+          joinDate: profile.joinDate || new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' }),
+          rank: null,
+          learningGoals: profile.learningGoals || [],
+          preferences: profile.preferences || {
+            emailNotifications: true,
+            weeklyDigest: true,
+            achievementAlerts: true
+          }
+        }
+
+        return { data: response }
+      }
+    )
+  },
+}
+
+// User Services
+export const userService = {
+  updateProfile: async (supabaseId, updates) => {
+    return await apiCallWithFallback(
+      () => api.put(`/user/profile/${supabaseId}`, updates),
+      async () => {
+        console.log('👤 Direct fallback: update profile')
+        const profile = JSON.parse(localStorage.getItem('ai-roadmap-profile') || '{}')
+        const updatedProfile = { ...profile, ...updates }
+        localStorage.setItem('ai-roadmap-profile', JSON.stringify(updatedProfile))
+        return { data: { success: true, user: updatedProfile } }
+      }
+    )
+  },
+
+  updateApiKey: async (supabaseId, provider, apiKey) => {
+    return await apiCallWithFallback(
+      () => api.put(`/user/api-keys/${supabaseId}`, { provider, apiKey }),
+      async () => {
+        console.log('🔑 Direct fallback: update API key')
+        return { data: { success: true } }
+      }
+    )
+  },
+
+  getStats: async (supabaseId) => {
+    return await apiCallWithFallback(
+      () => api.get(`/user/stats/${supabaseId}`),
+      async () => {
+        console.log('📊 Direct fallback: get stats')
+        const storedUser = getStoredUser()
+        const stats = storedUser?.stats || getInitialUserStats()
+
+        const response = {
+          stats,
+          activeLearningDays: JSON.parse(localStorage.getItem('ai-roadmap-activity-days') || '[]'),
+          lastActiveDate: localStorage.getItem('ai-roadmap-last-active'),
+          streakStartDate: localStorage.getItem('ai-roadmap-streak-start')
+        }
+
+        return { data: response }
+      }
+    )
+  },
+
+  updateActivity: async (supabaseId, activityType, value) => {
+    return await apiCallWithFallback(
+      () => api.post(`/user/activity/${supabaseId}`, { activityType, value }),
+      async () => {
+        console.log('📈 Direct fallback: update activity')
+        const today = new Date().toISOString().split('T')[0]
+        const activityDays = JSON.parse(localStorage.getItem('ai-roadmap-activity-days') || '[]')
+        if (!activityDays.includes(today)) {
+          activityDays.push(today)
+          localStorage.setItem('ai-roadmap-activity-days', JSON.stringify(activityDays))
+        }
+        return { data: { success: true, streak: 1 } }
+      }
+    )
+  },
+
+  getLeaderboard: async (type = 'xp', limit = 10) => {
+    return await apiCallWithFallback(
+      () => api.get('/user/leaderboard', { params: { type, limit } }),
+      async () => {
+        console.log('🏆 Direct fallback: get leaderboard')
+        return { data: [] }
+      }
+    )
+  },
+}
+
+// Progress Services
+export const progressService = {
+  getSummary: async (supabaseId) => {
+    return await apiCallWithFallback(
+      () => api.get(`/progress/${supabaseId}/summary`),
+      async () => {
+        console.log('📈 Direct fallback: progress summary')
+        return { data: { totalRoadmaps: 0, activeRoadmaps: 0, completedTasks: 0 } }
+      }
+    )
+  },
+
+  getActivity: async (supabaseId, year) => {
+    return await apiCallWithFallback(
+      () => api.get(`/progress/${supabaseId}/activity`, { params: { year } }),
+      async () => {
+        console.log('📅 Direct fallback: activity data')
+        const activityData = generateActivityData()
+        return { data: activityData }
+      }
+    )
+  },
+
+  checkAchievements: async (supabaseId) => {
+    return await apiCallWithFallback(
+      () => api.post(`/progress/${supabaseId}/check-achievements`),
+      async () => {
+        console.log('🏆 Direct fallback: check achievements')
+        const achievements = JSON.parse(localStorage.getItem('ai-roadmap-achievements') || '[]')
+        return { data: { newAchievements: [], totalEarned: achievements.length } }
+      }
+    )
+  },
+
+  getAchievements: async (supabaseId) => {
+    return await apiCallWithFallback(
+      () => api.get(`/progress/${supabaseId}/achievements`),
+      async () => {
+        console.log('🎖️ Direct fallback: get achievements')
+        const achievements = JSON.parse(localStorage.getItem('ai-roadmap-achievements') || '[]')
+        const safeAchievements = Array.isArray(achievements) ? achievements : []
+        return { data: safeAchievements }
+      }
+    )
+  },
+}
+
+// Wrapper function to handle API calls with direct fallback
+async function apiCallWithFallback(apiCall, fallbackHandler) {
+  try {
+    console.log('🔄 Attempting API call...')
+    return await apiCall()
+  } catch (error) {
+    const message = error?.message || 'Unknown error'
+    const code = error?.code || 'Unknown code'
+    console.log('🚨 API call failed, using direct fallback:', message, code)
+
+    if (message === 'Network Error' || code === 'ERR_NETWORK' || !error.response) {
+      console.log('✅ Triggering direct fallback...')
+      return await fallbackHandler()
+    }
+    throw error
+  }
+}
+
+function getStoredUser() {
+  try {
+    const stored = localStorage.getItem('ai-roadmap-user')
+    return stored ? JSON.parse(stored) : null
+  } catch (error) {
+    console.error('Error parsing stored user:', error)
+    return null
+  }
+}
+
+function getInitialUserStats() {
+  return {
+    streak: 0,
+    totalCompleted: 0,
+    level: 1,
+    experiencePoints: 0,
+    weeklyGoal: 5,
+    weeklyProgress: 0,
+    roadmapsCompleted: 0,
+    totalStudyTime: 0,
+    globalRanking: null,
+    attendedContests: 0,
+    problemsSolved: { easy: 0, medium: 0, hard: 0, total: 0 }
+  }
+}
+
+function generateActivityData() {
+  const today = new Date()
+  const activityData = []
+  const activeDays = JSON.parse(localStorage.getItem('ai-roadmap-activity-days') || '[]')
+
+  for (let i = 0; i < 365; i++) {
+    const date = new Date(today.getTime() - i * 24 * 60 * 60 * 1000)
+    const dateString = date.toISOString().split('T')[0]
+    const isActive = activeDays.includes(dateString)
+
+    activityData.push({
+      date: dateString,
+      tasksCompleted: isActive ? 1 : 0,
+      activityLevel: isActive ? 1 : 0
+    })
+  }
+
+  return {
+    year: today.getFullYear(),
+    totalDays: 365,
+    activeDays: activeDays.length,
+    currentStreak: calculateCurrentStreak(activeDays),
+    activityData
+  }
+}
+
+function calculateCurrentStreak(activeDays) {
+  if (activeDays.length === 0) return 0
+
+  const today = new Date().toISOString().split('T')[0]
+  const sortedDays = activeDays.sort().reverse()
+
+  let streak = 0
+  let currentDate = new Date()
+
+  for (const day of sortedDays) {
+    const dayDate = currentDate.toISOString().split('T')[0]
+    if (day === dayDate) {
+      streak++
+      currentDate.setDate(currentDate.getDate() - 1)
+    } else {
+      break
+    }
+  }
+
+  return streak
+}
+
+// Helper function to update progress
+export function updateProgressLocally(roadmapId, moduleId, taskId, completed) {
+  const roadmaps = JSON.parse(localStorage.getItem('ai-roadmap-roadmaps') || '[]')
+  const roadmapIndex = roadmaps.findIndex((r) => r.id === roadmapId)
+
+  if (roadmapIndex === -1) return
+
+  const roadmap = roadmaps[roadmapIndex]
+  const module = roadmap.modules.find((m) => m.id === moduleId)
+
+  if (!module) return
+
+  const task = module.tasks.find((t) => t.id === taskId)
+
+  if (!task) return
+
+  const wasCompleted = task.completed
+
+  task.completed = completed
+
+  if (completed && !wasCompleted) {
+    task.completedAt = new Date().toISOString()
+    task.timeSpent = task.timeSpent || 0
+  } else if (!completed && wasCompleted) {
+    delete task.completedAt
+  }
+
+  const totalTasks = roadmap.modules.reduce((sum, m) => sum + m.tasks.length, 0)
+  const completedTasks = roadmap.modules.reduce((sum, m) =>
+    sum + m.tasks.filter((t) => t.completed).length, 0
+  )
+  roadmap.progress = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0
+
+  const user = getStoredUser()
+  if (completed && !wasCompleted && user) {
+    user.stats.totalCompleted += 1
+    user.stats.weeklyProgress += 1
+    user.stats.experiencePoints += 10
+
+    if (task.difficulty) {
+      const difficulty = task.difficulty.toLowerCase()
+      if (user.stats.problemsSolved[difficulty] !== undefined) {
+        user.stats.problemsSolved[difficulty] += 1
+        user.stats.problemsSolved.total += 1
+      }
+    }
+
+    const newLevel = Math.floor(user.stats.experiencePoints / 100) + 1
+    user.stats.level = newLevel
+
+    localStorage.setItem('ai-roadmap-user', JSON.stringify(user))
+
+    const today = new Date().toISOString().split('T')[0]
+    const activityDays = JSON.parse(localStorage.getItem('ai-roadmap-activity-days') || '[]')
+    if (!activityDays.includes(today)) {
+      activityDays.push(today)
+      localStorage.setItem('ai-roadmap-activity-days', JSON.stringify(activityDays))
+    }
+    localStorage.setItem('ai-roadmap-last-active', new Date().toISOString())
+
+    const completions = JSON.parse(localStorage.getItem('ai-roadmap-completions') || '[]')
+    completions.push({
+      id: `${roadmapId}-${moduleId}-${taskId}`,
+      roadmapId,
+      moduleId,
+      taskId,
+      completedAt: new Date().toISOString(),
+      difficulty: task.difficulty,
+      type: task.type
+    })
+    localStorage.setItem('ai-roadmap-completions', JSON.stringify(completions))
+  } else if (!completed && wasCompleted && user) {
+    user.stats.totalCompleted = Math.max(0, user.stats.totalCompleted - 1)
+    user.stats.weeklyProgress = Math.max(0, user.stats.weeklyProgress - 1)
+    user.stats.experiencePoints = Math.max(0, user.stats.experiencePoints - 10)
+
+    if (task.difficulty) {
+      const difficulty = task.difficulty.toLowerCase()
+      if (user.stats.problemsSolved[difficulty] !== undefined) {
+        user.stats.problemsSolved[difficulty] = Math.max(0, user.stats.problemsSolved[difficulty] - 1)
+        user.stats.problemsSolved.total = Math.max(0, user.stats.problemsSolved.total - 1)
+      }
+    }
+
+    const newLevel = Math.floor(user.stats.experiencePoints / 100) + 1
+    user.stats.level = newLevel
+
+    localStorage.setItem('ai-roadmap-user', JSON.stringify(user))
+
+    const completions = JSON.parse(localStorage.getItem('ai-roadmap-completions') || '[]')
+    const filteredCompletions = completions.filter((c) => c.id !== `${roadmapId}-${moduleId}-${taskId}`)
+    localStorage.setItem('ai-roadmap-completions', JSON.stringify(filteredCompletions))
+  }
+
+  localStorage.setItem('ai-roadmap-roadmaps', JSON.stringify(roadmaps))
+
+  console.log('📈 Progress updated:', {
+    roadmapId,
+    moduleId,
+    taskId,
+    completed,
+    wasCompleted,
+    isNewCompletion: completed && !wasCompleted,
+    progress: roadmap.progress
+  })
+}
+
 export default api
