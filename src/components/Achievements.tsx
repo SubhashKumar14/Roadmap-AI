@@ -23,7 +23,7 @@ export function Achievements({ userStats }: AchievementsProps) {
       icon: Star,
       category: "Getting Started",
       requirement: 1,
-      current: Math.min(userStats.totalCompleted, 1),
+      current: Math.min(userStats.totalCompleted || 0, 1),
       type: "tasks",
       difficulty: "easy",
       points: 10,
