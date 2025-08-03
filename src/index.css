@@ -1,0 +1,139 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    /* LeetCode-inspired color palette */
+    --background: 218 23% 97%;
+    --foreground: 215 25% 15%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 215 25% 15%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 215 25% 15%;
+
+    --primary: 210 98% 48%;
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 210 98% 65%;
+
+    --secondary: 148 50% 47%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 215 15% 95%;
+    --muted-foreground: 215 15% 55%;
+
+    --accent: 25 100% 60%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 215 15% 88%;
+    --input: 215 15% 92%;
+    --ring: 210 98% 48%;
+
+    --success: 148 50% 47%;
+    --warning: 45 100% 60%;
+    --info: 210 98% 48%;
+
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
+    --gradient-success: linear-gradient(135deg, hsl(var(--secondary)), hsl(148 50% 60%));
+    --gradient-card: linear-gradient(180deg, hsl(var(--card)), hsl(215 15% 98%));
+
+    /* Shadows */
+    --shadow-sm: 0 1px 2px hsl(215 25% 15% / 0.05);
+    --shadow-md: 0 4px 6px hsl(215 25% 15% / 0.07);
+    --shadow-lg: 0 10px 15px hsl(215 25% 15% / 0.1);
+    --shadow-glow: 0 0 20px hsl(var(--primary) / 0.2);
+
+    --radius: 0.75rem;
+
+    --sidebar-background: 0 0% 98%;
+
+    --sidebar-foreground: 240 5.3% 26.1%;
+
+    --sidebar-primary: 240 5.9% 10%;
+
+    --sidebar-primary-foreground: 0 0% 98%;
+
+    --sidebar-accent: 240 4.8% 95.9%;
+
+    --sidebar-accent-foreground: 240 5.9% 10%;
+
+    --sidebar-border: 220 13% 91%;
+
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    /* Dark LeetCode theme */
+    --background: 215 30% 8%;
+    --foreground: 215 15% 92%;
+
+    --card: 215 25% 12%;
+    --card-foreground: 215 15% 92%;
+
+    --popover: 215 25% 12%;
+    --popover-foreground: 215 15% 92%;
+
+    --primary: 210 98% 55%;
+    --primary-foreground: 215 30% 8%;
+    --primary-glow: 210 98% 65%;
+
+    --secondary: 148 50% 52%;
+    --secondary-foreground: 215 30% 8%;
+
+    --muted: 215 20% 15%;
+    --muted-foreground: 215 15% 65%;
+
+    --accent: 25 100% 65%;
+    --accent-foreground: 215 30% 8%;
+
+    --destructive: 0 84% 65%;
+    --destructive-foreground: 215 30% 8%;
+
+    --border: 215 20% 18%;
+    --input: 215 20% 15%;
+    --ring: 210 98% 55%;
+
+    --success: 148 50% 52%;
+    --warning: 45 100% 65%;
+    --info: 210 98% 55%;
+
+    /* Dark gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
+    --gradient-success: linear-gradient(135deg, hsl(var(--secondary)), hsl(148 50% 60%));
+    --gradient-card: linear-gradient(180deg, hsl(var(--card)), hsl(215 20% 15%));
+
+    /* Dark shadows */
+    --shadow-sm: 0 1px 2px hsl(0 0% 0% / 0.3);
+    --shadow-md: 0 4px 6px hsl(0 0% 0% / 0.4);
+    --shadow-lg: 0 10px 15px hsl(0 0% 0% / 0.5);
+    --shadow-glow: 0 0 20px hsl(var(--primary) / 0.3);
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
