@@ -114,11 +114,11 @@ export function Achievements({ userStats }: AchievementsProps) {
       icon: Trophy,
       category: "Milestones",
       requirement: 5,
-      current: Math.min(userStats.roadmapsCompleted, 5),
+      current: Math.min(userStats.roadmapsCompleted || 0, 5),
       type: "roadmaps",
       difficulty: "hard",
       points: 500,
-      earned: userStats.roadmapsCompleted >= 5
+      earned: (userStats.roadmapsCompleted || 0) >= 5
     },
     {
       id: 9,
