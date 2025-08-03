@@ -113,6 +113,7 @@ const Index = () => {
         window.removeEventListener('progress-updated', handleProgressUpdate as EventListener)
         window.removeEventListener('stats-updated', handleStatsUpdate as EventListener)
         realtimeService.cleanup()
+        setConnectionStatus('disconnected')
       }
     } else if (!loading) {
       console.log('User not authenticated, showing landing page');
