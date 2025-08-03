@@ -23,9 +23,9 @@ export function Dashboard({ userStats, roadmaps }: DashboardProps) {
   const completedRoadmaps = safeRoadmaps.filter(r => r.progress === 100)
 
   const achievements = [
-    { id: 1, title: "First Steps", description: "Complete your first task", icon: Star, earned: userStats.totalCompleted >= 1 },
-    { id: 2, title: "Week Warrior", description: "7-day learning streak", icon: Flame, earned: userStats.streak >= 7 },
-    { id: 3, title: "Module Master", description: "Complete 5 modules", icon: Target, earned: userStats.totalCompleted >= 5 },
+    { id: 1, title: "First Steps", description: "Complete your first task", icon: Star, earned: (userStats.totalCompleted || 0) >= 1 },
+    { id: 2, title: "Week Warrior", description: "7-day learning streak", icon: Flame, earned: (userStats.streak || 0) >= 7 },
+    { id: 3, title: "Module Master", description: "Complete 5 modules", icon: Target, earned: (userStats.totalCompleted || 0) >= 5 },
     { id: 4, title: "Road Runner", description: "Complete a full roadmap", icon: Trophy, earned: completedRoadmaps.length > 0 },
   ]
 
@@ -50,7 +50,7 @@ export function Dashboard({ userStats, roadmaps }: DashboardProps) {
             <div className="flex items-center space-x-2">
               <CheckCircle className="h-5 w-5 text-success" />
               <div className="space-y-1">
-                <p className="text-2xl font-bold">{userStats.totalCompleted}</p>
+                <p className="text-2xl font-bold">{userStats.totalCompleted || 0}</p>
                 <p className="text-xs text-muted-foreground">Tasks Completed</p>
               </div>
             </div>
@@ -62,7 +62,7 @@ export function Dashboard({ userStats, roadmaps }: DashboardProps) {
             <div className="flex items-center space-x-2">
               <TrendingUp className="h-5 w-5 text-primary" />
               <div className="space-y-1">
-                <p className="text-2xl font-bold">{userStats.level}</p>
+                <p className="text-2xl font-bold">{userStats.level || 1}</p>
                 <p className="text-xs text-muted-foreground">Level</p>
               </div>
             </div>
