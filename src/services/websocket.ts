@@ -57,12 +57,14 @@ class WebSocketService {
     console.log('🔌 Connecting to WebSocket server:', serverUrl)
 
     this.socket = io(serverUrl, {
-      transports: ['websocket', 'polling'],
-      timeout: 20000,
+      transports: ['polling', 'websocket'], // Try polling first, then websocket
+      timeout: 10000,
       forceNew: true,
       reconnection: true,
       reconnectionAttempts: this.maxReconnectAttempts,
       reconnectionDelay: 1000,
+      withCredentials: false, // Avoid CORS issues
+      autoConnect: true,
     })
 
     this.setupEventListeners()
