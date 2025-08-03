@@ -148,7 +148,7 @@ class WebSocketService {
       console.log(`⏳ WebSocket reconnecting in ${delay}ms (attempt ${this.reconnectAttempts}/${this.maxReconnectAttempts})`)
 
       setTimeout(() => {
-        console.log('🔄 Attempting WebSocket reconnection...')
+        console.log('���� Attempting WebSocket reconnection...')
         this.connect()
       }, delay)
     } else {
@@ -263,6 +263,35 @@ class WebSocketService {
     if (this.socket.connected) return 'connected'
     if (this.socket.connecting) return 'connecting'
     return 'error'
+  }
+
+  // Test connection method
+  testConnection(): Promise<boolean> {
+    return new Promise((resolve) => {
+      if (this.isSocketConnected()) {
+        resolve(true)
+        return
+      }
+
+      if (!this.socket) {
+        resolve(false)
+        return
+      }
+
+      const timeout = setTimeout(() => {
+        resolve(false)
+      }, 3000)
+
+      this.socket.once('connect', () => {
+        clearTimeout(timeout)
+        resolve(true)
+      })
+
+      this.socket.once('connect_error', () => {
+        clearTimeout(timeout)
+        resolve(false)
+      })
+    })
   }
 
   // Cleanup
