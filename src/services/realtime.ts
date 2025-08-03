@@ -227,8 +227,8 @@ class RealtimeService {
         })
 
       if (error) {
-        console.error('Error saving roadmap:', error)
-        throw error
+        console.error('Error saving roadmap:', error.message || error)
+        throw new Error(`Failed to save roadmap: ${error.message || 'Unknown error'}`)
       }
 
       return data
