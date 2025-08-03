@@ -295,9 +295,22 @@ class QdrantDatabaseService {
   }
 
   async searchInQdrant(collection, query, limit = 10) {
+    // Immediate fallback if Qdrant is not available
+    if (!this.qdrantAvailable) {
+      console.log('🔍 Using localStorage fallback for searching:', collection, query)
+      const items = JSON.parse(localStorage.getItem(`qdrant-${collection}`) || '[]')
+      // Simple text-based search in localStorage
+      const searchLower = query.toLowerCase()
+      const filtered = items.filter(item => {
+        const searchContent = JSON.stringify(item.data).toLowerCase()
+        return searchContent.includes(searchLower)
+      })
+      return filtered.slice(0, limit).map(item => ({ id: item.id, ...item.data }))
+    }
+
     try {
       const embedding = this.generateSimpleEmbedding(query)
-      
+
       const response = await fetch(`${this.qdrantUrl}/collections/${collection}/points/search`, {
         method: 'POST',
         headers: this.getHeaders(),
@@ -322,7 +335,12 @@ class QdrantDatabaseService {
       console.error('Qdrant search error:', error)
       // Fallback to localStorage
       const items = JSON.parse(localStorage.getItem(`qdrant-${collection}`) || '[]')
-      return items.map(item => ({ id: item.id, ...item.data }))
+      const searchLower = query.toLowerCase()
+      const filtered = items.filter(item => {
+        const searchContent = JSON.stringify(item.data).toLowerCase()
+        return searchContent.includes(searchLower)
+      })
+      return filtered.slice(0, limit).map(item => ({ id: item.id, ...item.data }))
     }
   }
 
