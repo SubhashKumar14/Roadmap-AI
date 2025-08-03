@@ -373,8 +373,14 @@ class RealtimeService {
         .single()
 
       if (error && error.code !== 'PGRST116') {
-        console.error('Error fetching profile:', error.message || error)
-        throw new Error(`Failed to fetch profile: ${error.message || 'Unknown error'}`)
+        const errorMsg = error.message || error
+        console.error('Error fetching profile:', errorMsg)
+
+        if (isTableMissingError(error)) {
+          throw new Error('Database tables not set up. Please run the SQL schema in Supabase.')
+        }
+
+        throw new Error(`Failed to fetch profile: ${errorMsg}`)
       }
 
       return data || null
