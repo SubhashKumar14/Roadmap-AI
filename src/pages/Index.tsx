@@ -152,14 +152,36 @@ const Index = () => {
 
       // Load user data with individual error handling
       try {
-        console.log('Loading user stats...');
-        const statsData = await userService.getStats(user!.id);
-        setUserStats(statsData.stats || statsData);
-        console.log('User stats loaded:', statsData);
+        console.log('Loading user stats from real-time service...');
+        const statsData = await realtimeService.getUserStats(user!.id);
+        if (statsData) {
+          setUserStats({
+            streak: statsData.streak || 0,
+            totalCompleted: statsData.total_completed || 0,
+            level: statsData.level || 1,
+            experiencePoints: statsData.experience_points || 0,
+            activeLearningDays: statsData.active_learning_days || [],
+            weeklyGoal: statsData.weekly_goal || 5,
+            weeklyProgress: statsData.weekly_progress || 0,
+            roadmapsCompleted: statsData.roadmaps_completed || 0,
+            totalStudyTime: statsData.total_study_time || 0,
+            problemsSolved: statsData.problems_solved || { easy: 0, medium: 0, hard: 0, total: 0 },
+            globalRanking: statsData.global_ranking || null,
+            attendedContests: statsData.attended_contests || 0
+          });
+          console.log('User stats loaded from real-time service:', statsData);
+        } else {
+          console.log('No stats found, keeping empty state');
+        }
       } catch (statsError) {
-        console.error('❌ Error loading stats:', statsError);
-        // Keep current empty stats if loading fails
-        console.log('Using current empty stats state');
+        console.error('❌ Error loading stats from real-time service:', statsError);
+        // Fallback to existing API service
+        try {
+          const fallbackStats = await userService.getStats(user!.id);
+          setUserStats(fallbackStats.stats || fallbackStats);
+        } catch (fallbackError) {
+          console.error('❌ Fallback stats loading failed:', fallbackError);
+        }
       }
 
       try {
@@ -312,7 +334,7 @@ const Index = () => {
           await userService.updateActivity(user!.id, 'task_completed');
           await progressService.checkAchievements(user!.id);
         }
-        console.log('✅ Backend update successful');
+        console.log('�� Backend update successful');
       } catch (backendError) {
         console.log('🌐 Backend unavailable, using local storage');
         updateProgressLocally(roadmapId, moduleId, taskId, newCompletedState);
