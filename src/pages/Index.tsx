@@ -237,15 +237,28 @@ const Index = () => {
           // Sync profile to real-time service
           await realtimeService.syncUserProfile(user!.id, initialProfile);
         }
-      } catch (profileError) {
-        console.error('❌ Error loading profile from real-time service:', profileError);
-        // Use minimal profile data from auth if loading fails
-        setUserProfile(prev => ({
-          ...prev,
-          name: user!.user_metadata?.full_name || user!.email?.split('@')[0] || "",
-          email: user!.email || "",
-          joinDate: new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
-        }));
+      } catch (profileError: any) {
+        console.error('❌ Error loading profile from real-time service:', profileError?.message || profileError);
+        // Fallback to existing API service
+        try {
+          const fallbackProfile = await authService.getProfile(user!.id);
+          setUserProfile(prev => ({
+            ...prev,
+            ...fallbackProfile,
+            name: fallbackProfile.name || user!.user_metadata?.full_name || user!.email?.split('@')[0] || "",
+            email: fallbackProfile.email || user!.email || ""
+          }));
+          console.log('✅ Profile loaded from fallback API service');
+        } catch (fallbackError: any) {
+          console.error('❌ Fallback profile loading failed:', fallbackError?.message || fallbackError);
+          // Use minimal profile data from auth if loading fails
+          setUserProfile(prev => ({
+            ...prev,
+            name: user!.user_metadata?.full_name || user!.email?.split('@')[0] || "",
+            email: user!.email || "",
+            joinDate: new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
+          }));
+        }
       }
 
       // Load roadmaps using the dedicated function
