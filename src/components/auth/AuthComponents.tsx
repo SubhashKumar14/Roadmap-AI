@@ -33,10 +33,15 @@ export function AuthCard() {
     try {
       let result
       if (isSignUp) {
-        result = await signUp(email, password, { 
-          full_name: name,
-          email: email 
-        })
+        if (!name) {
+          toast({
+            title: "Missing information",
+            description: "Please provide your full name.",
+            variant: "destructive"
+          })
+          return
+        }
+        result = await signUp(email, password, name)
       } else {
         result = await signIn(email, password)
       }
@@ -44,13 +49,13 @@ export function AuthCard() {
       if (result.error) {
         toast({
           title: "Authentication failed",
-          description: result.error.message,
+          description: result.error,
           variant: "destructive"
         })
       } else {
         toast({
           title: isSignUp ? "Account created!" : "Welcome back!",
-          description: isSignUp ? "Please check your email to verify your account." : "You've been signed in successfully."
+          description: isSignUp ? "Your account has been created successfully." : "You've been signed in successfully."
         })
       }
     } catch (error: any) {
@@ -66,16 +71,14 @@ export function AuthCard() {
 
   const handleProviderAuth = async (provider: 'google' | 'github' | 'discord') => {
     setIsLoading(true)
-    
+
     try {
-      const { error } = await signInWithProvider(provider)
-      if (error) {
-        toast({
-          title: "Authentication failed",
-          description: error.message,
-          variant: "destructive"
-        })
-      }
+      // OAuth providers not supported with MongoDB backend yet
+      toast({
+        title: "OAuth not available",
+        description: "Please use email and password authentication for now.",
+        variant: "destructive"
+      })
     } catch (error: any) {
       toast({
         title: "An error occurred",
@@ -238,7 +241,7 @@ export function AuthCard() {
                 <Button
                   variant="outline"
                   onClick={() => handleProviderAuth('google')}
-                  disabled={isLoading}
+                  disabled={true}
                 >
                   <Chrome className="h-4 w-4 mr-2" />
                   Google
@@ -246,7 +249,7 @@ export function AuthCard() {
                 <Button
                   variant="outline"
                   onClick={() => handleProviderAuth('github')}
-                  disabled={isLoading}
+                  disabled={true}
                 >
                   <Github className="h-4 w-4 mr-2" />
                   GitHub
@@ -276,7 +279,7 @@ export function SignOutButton() {
       if (error) {
         toast({
           title: "Error signing out",
-          description: error.message,
+          description: error,
           variant: "destructive"
         })
       } else {
