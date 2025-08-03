@@ -248,8 +248,8 @@ class RealtimeService {
         .order('created_at', { ascending: false })
 
       if (error) {
-        console.error('Error fetching roadmaps:', error)
-        throw error
+        console.error('Error fetching roadmaps:', error.message || error)
+        throw new Error(`Failed to fetch roadmaps: ${error.message || 'Unknown error'}`)
       }
 
       return data || []
