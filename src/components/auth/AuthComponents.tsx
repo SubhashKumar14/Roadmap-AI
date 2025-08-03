@@ -259,9 +259,6 @@ export function AuthCard() {
         <p className="text-center text-sm text-muted-foreground">
           By signing up, you agree to our Terms of Service and Privacy Policy.
         </p>
-
-        {/* Temporary debug component */}
-        <SupabaseTest />
       </div>
     </div>
   )
