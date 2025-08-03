@@ -1,195 +1,273 @@
 const express = require('express');
 const router = express.Router();
+const jwt = require('jsonwebtoken');
 const User = require('../models/User');
-const bcrypt = require('bcryptjs');
+const { body, validationResult } = require('express-validator');
+
+const JWT_SECRET = process.env.JWT_SECRET || 'fallback-secret-key';
+
+// Middleware to verify JWT token
+const authenticateToken = (req, res, next) => {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1] || req.cookies?.auth_token;
+
+  if (!token) {
+    return res.status(401).json({ error: 'Access token required' });
+  }
+
+  jwt.verify(token, JWT_SECRET, (err, user) => {
+    if (err) {
+      return res.status(403).json({ error: 'Invalid or expired token' });
+    }
+    req.user = user;
+    next();
+  });
+};
 
 // Update user profile
-router.put('/profile/:clerkId', async (req, res) => {
+router.put('/profile/:userId', authenticateToken, [
+  body('name').optional().trim().escape(),
+  body('bio').optional().trim(),
+  body('location').optional().trim(),
+  body('githubUsername').optional().trim(),
+  body('twitterUsername').optional().trim(),
+  body('learningGoals').optional().isArray()
+], async (req, res) => {
   try {
-    const { clerkId } = req.params;
-    const updates = req.body;
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ error: 'Validation failed', details: errors.array() });
+    }
 
-    const user = await User.findOne({ clerkId });
+    const { userId } = req.params;
+    
+    // Check if updating own profile
+    if (req.user.userId !== userId) {
+      return res.status(403).json({ error: 'Access denied' });
+    }
+
+    if (!req.mongoConnected) {
+      console.log('MongoDB not connected, returning mock profile update');
+      return res.json({
+        success: true,
+        user: { id: userId, ...req.body }
+      });
+    }
+
+    const updates = {};
+    const allowedFields = ['name', 'bio', 'location', 'githubUsername', 'twitterUsername', 'learningGoals', 'profileImage'];
+    
+    allowedFields.forEach(field => {
+      if (req.body[field] !== undefined) {
+        updates[field] = req.body[field];
+      }
+    });
+
+    const user = await User.findByIdAndUpdate(
+      userId,
+      updates,
+      { new: true, runValidators: true }
+    ).select('-password -apiKeys');
+
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    // Update allowed fields
-    const allowedFields = ['name', 'bio', 'location', 'githubUsername', 'twitterUsername', 'learningGoals', 'preferences'];
-    allowedFields.forEach(field => {
-      if (updates[field] !== undefined) {
-        user[field] = updates[field];
+    console.log('Profile updated for user:', user.email);
+
+    res.json({
+      success: true,
+      user: {
+        id: user._id,
+        email: user.email,
+        name: user.name,
+        profileImage: user.profileImage,
+        bio: user.bio,
+        location: user.location,
+        githubUsername: user.githubUsername,
+        twitterUsername: user.twitterUsername,
+        learningGoals: user.learningGoals,
+        stats: user.stats,
+        preferences: user.preferences
+      }
+    });
+  } catch (error) {
+    console.error('Error updating profile:', error);
+    res.status(500).json({ error: 'Failed to update profile', details: error.message });
+  }
+});
+
+// Update user preferences
+router.put('/preferences/:userId', authenticateToken, [
+  body('emailNotifications').optional().isBoolean(),
+  body('weeklyDigest').optional().isBoolean(),
+  body('achievementAlerts').optional().isBoolean(),
+  body('theme').optional().isIn(['light', 'dark', 'system'])
+], async (req, res) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ error: 'Validation failed', details: errors.array() });
+    }
+
+    const { userId } = req.params;
+    
+    if (req.user.userId !== userId) {
+      return res.status(403).json({ error: 'Access denied' });
+    }
+
+    if (!req.mongoConnected) {
+      console.log('MongoDB not connected, returning mock preferences update');
+      return res.json({
+        success: true,
+        preferences: req.body
+      });
+    }
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Update preferences
+    Object.keys(req.body).forEach(key => {
+      if (user.preferences[key] !== undefined) {
+        user.preferences[key] = req.body[key];
       }
     });
 
     await user.save();
 
-    res.json({ 
-      success: true, 
-      user: user.toObject()
-    });
-  } catch (error) {
-    console.error('Error updating user profile:', error);
-    res.status(500).json({ error: 'Failed to update profile' });
-  }
-});
-
-// Update API keys
-router.put('/api-keys/:clerkId', async (req, res) => {
-  try {
-    const { clerkId } = req.params;
-    const { provider, apiKey } = req.body;
-
-    if (!provider || !apiKey) {
-      return res.status(400).json({ error: 'Provider and API key are required' });
-    }
-
-    const validProviders = ['openai', 'gemini', 'perplexity'];
-    if (!validProviders.includes(provider)) {
-      return res.status(400).json({ error: 'Invalid provider' });
-    }
-
-    const user = await User.findOne({ clerkId });
-    if (!user) {
-      return res.status(404).json({ error: 'User not found' });
-    }
-
-    // In production, you should encrypt the API key
-    if (!user.apiKeys) {
-      user.apiKeys = {};
-    }
-    user.apiKeys[provider] = apiKey;
-    
-    await user.save();
-
-    res.json({ 
-      success: true, 
-      message: `${provider} API key updated successfully` 
-    });
-  } catch (error) {
-    console.error('Error updating API key:', error);
-    res.status(500).json({ error: 'Failed to update API key' });
-  }
-});
-
-// Get user stats
-router.get('/stats/:clerkId', async (req, res) => {
-  try {
-    const { clerkId } = req.params;
-
-    console.log('Fetching stats for user:', clerkId);
-
-    const user = await User.findOne({ clerkId });
-    if (!user) {
-      console.log('User not found for clerkId:', clerkId);
-      return res.status(404).json({ error: 'User not found' });
-    }
-
-    console.log('User stats found:', user.stats);
-
     res.json({
-      stats: user.stats || {
-        streak: 0,
-        totalCompleted: 0,
-        level: 1,
-        experiencePoints: 0,
-        weeklyGoal: 10,
-        weeklyProgress: 0,
-        roadmapsCompleted: 0,
-        totalStudyTime: 0,
-        globalRanking: 999999,
-        attendedContests: 0,
-        problemsSolved: {
-          easy: 0,
-          medium: 0,
-          hard: 0,
-          total: 0
-        }
-      },
-      activeLearningDays: user.activeLearningDays || [],
-      lastActiveDate: user.lastActiveDate,
-      streakStartDate: user.streakStartDate
+      success: true,
+      preferences: user.preferences
     });
   } catch (error) {
-    console.error('Error fetching user stats:', error);
-    res.status(500).json({ error: 'Failed to fetch stats', details: error.message });
+    console.error('Error updating preferences:', error);
+    res.status(500).json({ error: 'Failed to update preferences', details: error.message });
   }
 });
 
-// Update user activity (for streak tracking)
-router.post('/activity/:clerkId', async (req, res) => {
+// Update user stats
+router.put('/stats/:userId', authenticateToken, async (req, res) => {
   try {
-    const { clerkId } = req.params;
-    const { activityType, value } = req.body;
+    const { userId } = req.params;
+    
+    if (req.user.userId !== userId) {
+      return res.status(403).json({ error: 'Access denied' });
+    }
 
-    const user = await User.findOne({ clerkId });
+    if (!req.mongoConnected) {
+      console.log('MongoDB not connected, returning mock stats update');
+      return res.json({
+        success: true,
+        stats: req.body
+      });
+    }
+
+    const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    // Update streak
+    // Update stats
+    Object.keys(req.body).forEach(key => {
+      if (user.stats[key] !== undefined) {
+        user.stats[key] = req.body[key];
+      }
+    });
+
+    // Update streak if needed
     user.updateStreak();
-
-    // Update activity-specific stats
-    switch (activityType) {
-      case 'task_completed':
-        user.stats.totalCompleted += 1;
-        user.stats.weeklyProgress += 1;
-        user.stats.experiencePoints += value || 10;
-        break;
-      case 'roadmap_completed':
-        user.stats.roadmapsCompleted += 1;
-        user.stats.experiencePoints += 100;
-        break;
-      case 'study_time':
-        user.stats.totalStudyTime += value || 0;
-        break;
-    }
-
+    
     // Check for level up
     const leveledUp = user.updateLevel();
     
     await user.save();
 
-    res.json({ 
-      success: true, 
+    res.json({
+      success: true,
       stats: user.stats,
-      leveledUp,
-      streak: user.stats.streak
+      leveledUp
     });
   } catch (error) {
-    console.error('Error updating user activity:', error);
-    res.status(500).json({ error: 'Failed to update activity' });
+    console.error('Error updating stats:', error);
+    res.status(500).json({ error: 'Failed to update stats', details: error.message });
   }
 });
 
-// Get leaderboard
-router.get('/leaderboard', async (req, res) => {
+// Get user stats
+router.get('/stats/:userId', authenticateToken, async (req, res) => {
   try {
-    const { type = 'xp', limit = 10 } = req.query;
+    const { userId } = req.params;
     
-    let sortField;
-    switch (type) {
-      case 'streak':
-        sortField = 'stats.streak';
-        break;
-      case 'completed':
-        sortField = 'stats.totalCompleted';
-        break;
-      case 'level':
-        sortField = 'stats.level';
-        break;
-      default:
-        sortField = 'stats.experiencePoints';
+    if (req.user.userId !== userId) {
+      return res.status(403).json({ error: 'Access denied' });
     }
 
-    const users = await User.find({})
-      .select('name profileImage stats')
-      .sort({ [sortField]: -1 })
-      .limit(parseInt(limit))
-      .exec();
+    if (!req.mongoConnected) {
+      console.log('MongoDB not connected, returning mock stats');
+      return res.json({
+        stats: {
+          streak: 0,
+          totalCompleted: 0,
+          level: 1,
+          experiencePoints: 0,
+          weeklyGoal: 10,
+          weeklyProgress: 0,
+          roadmapsCompleted: 0,
+          totalStudyTime: 0,
+          globalRanking: 999999,
+          attendedContests: 0,
+          problemsSolved: {
+            easy: 0,
+            medium: 0,
+            hard: 0,
+            total: 0
+          }
+        }
+      });
+    }
 
-    res.json(users);
+    const user = await User.findById(userId).select('stats');
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    res.json({ stats: user.stats });
+  } catch (error) {
+    console.error('Error fetching stats:', error);
+    res.status(500).json({ error: 'Failed to fetch stats', details: error.message });
+  }
+});
+
+// Get user leaderboard ranking
+router.get('/leaderboard', async (req, res) => {
+  try {
+    if (!req.mongoConnected) {
+      return res.json({
+        leaderboard: [
+          { name: 'Demo User 1', experiencePoints: 1500, level: 5 },
+          { name: 'Demo User 2', experiencePoints: 1200, level: 4 },
+          { name: 'Demo User 3', experiencePoints: 1000, level: 3 }
+        ]
+      });
+    }
+
+    const topUsers = await User.find({})
+      .select('name profileImage stats.experiencePoints stats.level')
+      .sort({ 'stats.experiencePoints': -1 })
+      .limit(10);
+
+    const leaderboard = topUsers.map((user, index) => ({
+      rank: index + 1,
+      name: user.name,
+      profileImage: user.profileImage,
+      experiencePoints: user.stats.experiencePoints,
+      level: user.stats.level
+    }));
+
+    res.json({ leaderboard });
   } catch (error) {
     console.error('Error fetching leaderboard:', error);
     res.status(500).json({ error: 'Failed to fetch leaderboard' });
