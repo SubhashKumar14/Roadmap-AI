@@ -343,8 +343,14 @@ class RealtimeService {
         })
 
       if (error) {
-        console.error('Error syncing profile:', error.message || error)
-        throw new Error(`Failed to sync profile: ${error.message || 'Unknown error'}`)
+        const errorMsg = error.message || error
+        console.error('Error syncing profile:', errorMsg)
+
+        if (isTableMissingError(error)) {
+          throw new Error('Database tables not set up. Please run the SQL schema in Supabase.')
+        }
+
+        throw new Error(`Failed to sync profile: ${errorMsg}`)
       }
 
       return data
