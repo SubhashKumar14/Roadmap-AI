@@ -233,6 +233,9 @@ class RealtimeService {
   // Save roadmap to Supabase
   async saveRoadmap(roadmap: any) {
     if (!this.userId) return
+    if (!isSupabaseConfigured()) {
+      throw new Error('Supabase not configured')
+    }
 
     try {
       const { data, error } = await supabase
