@@ -245,9 +245,23 @@ class QdrantDatabaseService {
   }
 
   async storeInQdrant(collection, id, data, searchText = '') {
+    // Immediate fallback if Qdrant is not available
+    if (!this.qdrantAvailable) {
+      console.log('📝 Using localStorage fallback for storing:', collection, id)
+      const items = JSON.parse(localStorage.getItem(`qdrant-${collection}`) || '[]')
+      const existingIndex = items.findIndex(item => item.id === id)
+      if (existingIndex >= 0) {
+        items[existingIndex] = { id, data }
+      } else {
+        items.push({ id, data })
+      }
+      localStorage.setItem(`qdrant-${collection}`, JSON.stringify(items))
+      return true
+    }
+
     try {
       const embedding = this.generateSimpleEmbedding(searchText || JSON.stringify(data))
-      
+
       const response = await fetch(`${this.qdrantUrl}/collections/${collection}/points`, {
         method: 'PUT',
         headers: this.getHeaders(),
@@ -269,7 +283,12 @@ class QdrantDatabaseService {
       console.error('Qdrant storage error:', error)
       // Fallback to localStorage
       const items = JSON.parse(localStorage.getItem(`qdrant-${collection}`) || '[]')
-      items.push({ id, data })
+      const existingIndex = items.findIndex(item => item.id === id)
+      if (existingIndex >= 0) {
+        items[existingIndex] = { id, data }
+      } else {
+        items.push({ id, data })
+      }
       localStorage.setItem(`qdrant-${collection}`, JSON.stringify(items))
       return true
     }
