@@ -231,8 +231,9 @@ class RealtimeService {
       }
 
       return data || null
-    } catch (error) {
-      console.error('Failed to fetch user stats:', error)
+    } catch (error: any) {
+      const errorMessage = error?.message || 'Unknown error fetching user stats'
+      console.error('Failed to fetch user stats:', errorMessage)
       return null
     }
   }
