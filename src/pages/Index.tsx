@@ -163,15 +163,7 @@ const Index = () => {
       console.log('🔍 Checking connection status...');
       setConnectionStatus(realtimeService.getConnectionStatus());
 
-      // Sync user with backend
-      console.log('🔄 Syncing user with backend...');
-      const syncResult = await authService.syncUser(
-        user!.id,
-        user!.email || "",
-        user!.user_metadata?.full_name || user!.email?.split('@')[0] || "",
-        user!.user_metadata?.avatar_url || ""
-      );
-      console.log('✅ User sync completed:', syncResult);
+      console.log('🔄 User already authenticated with database');
 
       // Load user data with individual error handling
       try {
