@@ -15,6 +15,8 @@ import { AuthCard } from "@/components/auth/AuthComponents"
 import { authService, roadmapService, userService, progressService, updateProgressLocally } from "@/services/api"
 import socketService from "@/services/socket"
 import realtimeService from "@/services/realtime"
+import { checkDatabaseSetup, isTableMissingError, type DatabaseStatus } from "@/services/databaseSetup"
+import { DatabaseSetupCard } from "@/components/DatabaseSetup"
 
 const Index = () => {
   const { user, loading } = useAuth()
