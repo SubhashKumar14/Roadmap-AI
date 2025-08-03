@@ -46,6 +46,10 @@ class RealtimeService {
 
   // Initialize real-time subscriptions for a user
   initializeUserSubscriptions(userId: string) {
+    if (!isSupabaseConfigured()) {
+      console.warn('⚠️ Supabase not configured, skipping real-time subscriptions')
+      return
+    }
     this.userId = userId
     this.subscribeToUserProgress(userId)
     this.subscribeToUserStats(userId)
