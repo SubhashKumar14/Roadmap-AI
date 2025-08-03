@@ -241,18 +241,8 @@ const Index = () => {
         }));
       }
 
-      try {
-        console.log('Loading user roadmaps...');
-        const roadmapsData = await roadmapService.getUserRoadmaps(user!.id);
-
-        // Ensure roadmapsData is an array
-        const safeRoadmapsData = Array.isArray(roadmapsData) ? roadmapsData : [];
-        setRoadmaps(safeRoadmapsData);
-        console.log('User roadmaps loaded:', safeRoadmapsData);
-      } catch (roadmapsError) {
-        console.error('❌ Error loading roadmaps:', roadmapsError);
-        setRoadmaps([]); // Empty roadmaps if loading fails
-      }
+      // Load roadmaps using the dedicated function
+      await loadUserRoadmaps();
 
       try {
         console.log('Loading user achievements...');
