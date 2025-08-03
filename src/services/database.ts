@@ -66,6 +66,15 @@ export interface Roadmap {
 
 class DatabaseService {
   private baseUrl = API_BASE_URL
+  private isCloudEnvironment = this.detectCloudEnvironment()
+
+  private detectCloudEnvironment(): boolean {
+    return window.location.hostname.includes('fly.dev') ||
+           window.location.hostname.includes('vercel.app') ||
+           window.location.hostname.includes('netlify.app') ||
+           window.location.hostname.includes('herokuapp.com') ||
+           !window.location.hostname.includes('localhost')
+  }
 
   // User authentication and profile management
   async createUser(userData: {
