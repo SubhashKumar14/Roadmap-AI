@@ -406,17 +406,7 @@ const Index = () => {
         }
       } catch (realtimeError: any) {
         console.log('🌐 Real-time service unavailable:', realtimeError?.message || realtimeError);
-        try {
-          await roadmapService.updateProgress(roadmapId, moduleId, taskId, newCompletedState);
-          if (newCompletedState && !wasCompleted) {
-            await userService.updateActivity(user!.id, 'task_completed');
-            await progressService.checkAchievements(user!.id);
-          }
-          console.log('✅ Fallback update successful');
-        } catch (fallbackError: any) {
-          console.log('🌐 All services unavailable, using local storage:', fallbackError?.message || fallbackError);
-          updateProgressLocally(roadmapId, moduleId, taskId, newCompletedState);
-        }
+        console.log('🌐 Using local progress tracking only');
       }
 
       // Update local state
@@ -509,7 +499,7 @@ const Index = () => {
       // Real-time progress sync handled by realtimeService
 
     } catch (error) {
-      console.error('❌ Error updating task:', error)
+      console.error('��� Error updating task:', error)
       toast({
         title: "Update Failed",
         description: "Failed to update task. Please try again.",
