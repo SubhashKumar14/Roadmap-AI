@@ -12,11 +12,9 @@ import { BookOpen, Plus, Star, Flame, Target, Trophy, Zap } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { useAuth, AuthenticatedOnly, UnauthenticatedOnly } from "@/components/auth/DatabaseAuthProvider"
 import { AuthCard } from "@/components/auth/AuthComponents"
-import { authService, roadmapService, userService, progressService, updateProgressLocally } from "@/services/api"
-import socketService from "@/services/socket"
-import realtimeService from "@/services/realtime"
-import { checkDatabaseSetup, isTableMissingError, type DatabaseStatus } from "@/services/databaseSetup"
-import { DatabaseSetupCard } from "@/components/DatabaseSetup"
+import { databaseService } from "@/services/database"
+import webSocketService from "@/services/websocket"
+import realtimeService from "@/services/realtimeNew"
 
 const Index = () => {
   const { user, loading } = useAuth()
