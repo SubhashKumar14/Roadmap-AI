@@ -24,14 +24,14 @@ const Index = () => {
   const [showGenerator, setShowGenerator] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
 
-  // User data state - only real progress, no demo data
+  // User data state - starts empty, populated from backend only
   const [userStats, setUserStats] = useState({
     streak: 0,
     totalCompleted: 0,
     level: 1,
     experiencePoints: 0,
     activeLearningDays: [],
-    weeklyGoal: 10,
+    weeklyGoal: 5, // Reasonable default
     weeklyProgress: 0,
     roadmapsCompleted: 0,
     totalStudyTime: 0,
@@ -41,7 +41,7 @@ const Index = () => {
       hard: 0,
       total: 0
     },
-    globalRanking: 999999, // Start at bottom, only real achievements count
+    globalRanking: null, // No ranking until earned
     attendedContests: 0
   })
 
