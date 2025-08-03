@@ -219,8 +219,14 @@ class RealtimeService {
         .single()
 
       if (error && error.code !== 'PGRST116') { // PGRST116 = no rows returned
-        console.error('Error fetching user stats:', error.message || error)
-        throw new Error(`Failed to fetch user stats: ${error.message || 'Unknown error'}`)
+        const errorMsg = error.message || error
+        console.error('Error fetching user stats:', errorMsg)
+
+        if (isTableMissingError(error)) {
+          throw new Error('Database tables not set up. Please run the SQL schema in Supabase.')
+        }
+
+        throw new Error(`Failed to fetch user stats: ${errorMsg}`)
       }
 
       return data || null
