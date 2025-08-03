@@ -27,7 +27,7 @@ export function Achievements({ userStats }: AchievementsProps) {
       type: "tasks",
       difficulty: "easy",
       points: 10,
-      earned: userStats.totalCompleted >= 1
+      earned: (userStats.totalCompleted || 0) >= 1
     },
     {
       id: 2,
@@ -36,11 +36,11 @@ export function Achievements({ userStats }: AchievementsProps) {
       icon: CheckCircle,
       category: "Progress",
       requirement: 10,
-      current: Math.min(userStats.totalCompleted, 10),
+      current: Math.min(userStats.totalCompleted || 0, 10),
       type: "tasks",
       difficulty: "medium",
       points: 50,
-      earned: userStats.totalCompleted >= 10
+      earned: (userStats.totalCompleted || 0) >= 10
     },
     {
       id: 3,
@@ -49,11 +49,11 @@ export function Achievements({ userStats }: AchievementsProps) {
       icon: Target,
       category: "Progress", 
       requirement: 100,
-      current: Math.min(userStats.totalCompleted, 100),
+      current: Math.min(userStats.totalCompleted || 0, 100),
       type: "tasks",
       difficulty: "hard",
       points: 500,
-      earned: userStats.totalCompleted >= 100
+      earned: (userStats.totalCompleted || 0) >= 100
     },
     {
       id: 4,
@@ -62,11 +62,11 @@ export function Achievements({ userStats }: AchievementsProps) {
       icon: Flame,
       category: "Consistency",
       requirement: 7,
-      current: Math.min(userStats.streak, 7),
+      current: Math.min(userStats.streak || 0, 7),
       type: "streak",
       difficulty: "medium",
       points: 75,
-      earned: userStats.streak >= 7
+      earned: (userStats.streak || 0) >= 7
     },
     {
       id: 5,
