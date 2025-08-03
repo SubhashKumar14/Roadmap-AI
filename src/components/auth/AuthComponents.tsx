@@ -7,7 +7,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useAuth } from './SupabaseAuthProvider'
 import { useToast } from '@/hooks/use-toast'
 import { Eye, EyeOff, Chrome, Github, Zap } from 'lucide-react'
-import { SupabaseTest } from '../SupabaseTest'
 
 export function AuthCard() {
   const [isLoading, setIsLoading] = useState(false)
