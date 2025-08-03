@@ -27,11 +27,16 @@ class RealtimeService {
 
     console.log('🔄 Initializing real-time subscriptions for user:', userId)
 
-    // Initialize WebSocket connection
-    webSocketService.initializeConnection(userId)
+    try {
+      // Initialize WebSocket connection
+      webSocketService.initializeConnection(userId)
 
-    // Subscribe to real-time events
-    this.subscribeToUpdates()
+      // Subscribe to real-time events
+      this.subscribeToUpdates()
+    } catch (error) {
+      console.warn('⚠�� Real-time features unavailable:', error)
+      console.log('📱 Application will continue with API-only mode')
+    }
   }
 
   // Subscribe to real-time events
