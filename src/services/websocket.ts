@@ -48,6 +48,14 @@ class WebSocketService {
 
     try {
       this.connect()
+
+      // Set a timeout to check if connection succeeded
+      setTimeout(() => {
+        if (!this.isConnected) {
+          console.warn('⚠️ WebSocket connection timed out - continuing without real-time features')
+        }
+      }, 5000)
+
     } catch (error) {
       console.error('🚫 Failed to initialize WebSocket connection:', error)
       console.log('📱 Continuing without real-time features...')
