@@ -3,13 +3,20 @@ const mongoose = require('mongoose');
 const userSchema = new mongoose.Schema({
   clerkId: {
     type: String,
-    required: true,
-    unique: true
+    unique: true,
+    sparse: true // Allow null values for non-Clerk users
   },
   email: {
     type: String,
     required: true,
     unique: true
+  },
+  password: {
+    type: String,
+    required: function() {
+      return !this.clerkId; // Password required only if not using Clerk
+    },
+    select: false // Don't include password in queries by default
   },
   name: {
     type: String,
