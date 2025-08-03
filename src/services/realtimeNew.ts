@@ -16,7 +16,7 @@ class RealtimeService {
   private isInitialized = false
 
   // Initialize real-time subscriptions for a user
-  initializeUserSubscriptions(userId: string) {
+  async initializeUserSubscriptions(userId: string) {
     if (this.isInitialized && this.userId === userId) {
       console.log('Real-time service already initialized for this user')
       return
@@ -31,10 +31,19 @@ class RealtimeService {
       // Initialize WebSocket connection
       webSocketService.initializeConnection(userId)
 
-      // Subscribe to real-time events
-      this.subscribeToUpdates()
+      // Test the connection
+      const isConnected = await webSocketService.testConnection()
+
+      if (isConnected) {
+        console.log('✅ WebSocket connection successful')
+        // Subscribe to real-time events
+        this.subscribeToUpdates()
+      } else {
+        console.warn('⚠️ WebSocket connection failed - continuing with API-only mode')
+      }
+
     } catch (error) {
-      console.warn('⚠�� Real-time features unavailable:', error)
+      console.warn('⚠️ Real-time features unavailable:', error)
       console.log('📱 Application will continue with API-only mode')
     }
   }
@@ -201,7 +210,7 @@ class RealtimeService {
     }
 
     try {
-      console.log('🗺️ Saving roadmap:', roadmap.title)
+      console.log('����️ Saving roadmap:', roadmap.title)
 
       const { roadmap: savedRoadmap, error } = await databaseService.saveRoadmap(this.userId, roadmap)
 
