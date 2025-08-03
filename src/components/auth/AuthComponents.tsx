@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { useAuth } from './SupabaseAuthProvider'
+import { useAuth } from './DatabaseAuthProvider'
 import { useToast } from '@/hooks/use-toast'
 import { Eye, EyeOff, Chrome, Github, Zap } from 'lucide-react'
 
