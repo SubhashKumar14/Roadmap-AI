@@ -131,17 +131,25 @@ const Index = () => {
       setRoadmaps(Array.isArray(roadmapsData) ? roadmapsData : []);
       console.log('✅ User roadmaps loaded from real-time service:', roadmapsData.length);
     } catch (error: any) {
-      console.error('❌ Error loading roadmaps from real-time service:', error?.message || error);
-      // Fallback to existing API service
-      try {
-        const fallbackData = await roadmapService.getUserRoadmaps(user.id);
-        const safeRoadmaps = Array.isArray(fallbackData) ? fallbackData : [];
-        setRoadmaps(safeRoadmaps);
-        console.log('✅ User roadmaps loaded from fallback API service:', safeRoadmaps.length);
-      } catch (fallbackError: any) {
-        console.error('❌ Fallback roadmap loading failed:', fallbackError?.message || fallbackError);
+      const errorMsg = error?.message || error;
+      console.error('❌ Error loading roadmaps from real-time service:', errorMsg);
+
+      if (isTableMissingError(error)) {
+        console.warn('📋 Database tables not set up, using empty roadmaps');
+        setShowDatabaseSetup(true);
         setRoadmaps([]);
-        console.log('Using empty roadmaps array');
+      } else {
+        // Fallback to existing API service
+        try {
+          const fallbackData = await roadmapService.getUserRoadmaps(user.id);
+          const safeRoadmaps = Array.isArray(fallbackData) ? fallbackData : [];
+          setRoadmaps(safeRoadmaps);
+          console.log('✅ User roadmaps loaded from fallback API service:', safeRoadmaps.length);
+        } catch (fallbackError: any) {
+          console.error('❌ Fallback roadmap loading failed:', fallbackError?.message || fallbackError);
+          setRoadmaps([]);
+          console.log('Using empty roadmaps array');
+        }
       }
     }
   }
