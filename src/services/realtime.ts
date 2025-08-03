@@ -261,8 +261,14 @@ class RealtimeService {
         })
 
       if (error) {
-        console.error('Error saving roadmap:', error.message || error)
-        throw new Error(`Failed to save roadmap: ${error.message || 'Unknown error'}`)
+        const errorMsg = error.message || error
+        console.error('Error saving roadmap:', errorMsg)
+
+        if (isTableMissingError(error)) {
+          throw new Error('Database tables not set up. Please run the SQL schema in Supabase.')
+        }
+
+        throw new Error(`Failed to save roadmap: ${errorMsg}`)
       }
 
       return data
