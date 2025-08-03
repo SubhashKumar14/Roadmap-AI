@@ -194,8 +194,8 @@ class RealtimeService {
         .single()
 
       if (error && error.code !== 'PGRST116') { // PGRST116 = no rows returned
-        console.error('Error fetching user stats:', error)
-        throw error
+        console.error('Error fetching user stats:', error.message || error)
+        throw new Error(`Failed to fetch user stats: ${error.message || 'Unknown error'}`)
       }
 
       return data || null
