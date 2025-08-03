@@ -273,32 +273,9 @@ const Index = () => {
       // Load roadmaps using the dedicated function
       await loadUserRoadmaps();
 
-      try {
-        console.log('Loading user achievements...');
-        const achievementsData = await progressService.getAchievements(user!.id);
-
-        // Ensure achievementsData is an array
-        const safeAchievementsData = Array.isArray(achievementsData) ? achievementsData : [];
-
-        // Set achievements from backend data
-        const processedAchievements = safeAchievementsData.map((achievement: any) => ({
-          id: achievement.id,
-          title: achievement.title,
-          description: achievement.description,
-          icon: achievement.category === 'streak' ? Flame :
-                achievement.category === 'completion' ? Target :
-                achievement.category === 'special' ? Trophy : Star,
-          earned: achievement.isCompleted,
-          earnedDate: achievement.earnedAt,
-          category: achievement.category
-        }));
-
-        setAchievements(processedAchievements);
-        console.log('User achievements loaded:', processedAchievements);
-      } catch (achievementsError) {
-        console.error('❌ Error loading achievements:', achievementsError);
-        setAchievements([]); // Empty array if can't load
-      }
+      // Set default achievements for now
+      setAchievements([]);
+      console.log('Using empty achievements array');
 
       // Check if we're in cloud environment
       const isCloudEnvironment = window.location.hostname.includes('fly.dev') ||
