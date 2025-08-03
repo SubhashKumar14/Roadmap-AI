@@ -79,6 +79,33 @@ const Index = () => {
       console.log('User authenticated:', user.id, user.email);
       initializeUserData()
       connectSocket()
+
+      // Initialize real-time subscriptions
+      realtimeService.initializeUserSubscriptions(user.id)
+
+      // Listen for real-time updates
+      const handleProgressUpdate = (event: CustomEvent) => {
+        console.log('📊 Real-time progress update received:', event.detail)
+        // Refresh roadmaps data
+        loadUserRoadmaps()
+      }
+
+      const handleStatsUpdate = (event: CustomEvent) => {
+        console.log('📈 Real-time stats update received:', event.detail)
+        // Update stats directly
+        if (event.detail.stats) {
+          setUserStats(event.detail.stats)
+        }
+      }
+
+      window.addEventListener('progress-updated', handleProgressUpdate as EventListener)
+      window.addEventListener('stats-updated', handleStatsUpdate as EventListener)
+
+      return () => {
+        window.removeEventListener('progress-updated', handleProgressUpdate as EventListener)
+        window.removeEventListener('stats-updated', handleStatsUpdate as EventListener)
+        realtimeService.cleanup()
+      }
     } else if (!loading) {
       console.log('User not authenticated, showing landing page');
       setIsLoading(false)
@@ -87,7 +114,7 @@ const Index = () => {
 
   const initializeUserData = async () => {
     try {
-      console.log('🚀 Initializing user data for:', user!.id);
+      console.log('�� Initializing user data for:', user!.id);
       console.log('📧 User email:', user!.email);
       console.log('👤 User name:', user!.user_metadata?.full_name || user!.email?.split('@')[0]);
 
