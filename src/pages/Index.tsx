@@ -108,21 +108,8 @@ const Index = () => {
         console.log('User stats loaded:', statsData);
       } catch (statsError) {
         console.error('❌ Error loading stats:', statsError);
-        // Use fresh empty stats if loading fails - no fake progress
-        setUserStats({
-          streak: 0,
-          totalCompleted: 0,
-          level: 1,
-          experiencePoints: 0,
-          activeLearningDays: [],
-          weeklyGoal: 10,
-          weeklyProgress: 0,
-          roadmapsCompleted: 0,
-          totalStudyTime: 0,
-          problemsSolved: { easy: 0, medium: 0, hard: 0, total: 0 },
-          globalRanking: 999999,
-          attendedContests: 0
-        });
+        // Keep current empty stats if loading fails
+        console.log('Using current empty stats state');
       }
 
       try {
