@@ -622,8 +622,8 @@ Make it comprehensive with 6-10 modules and 4-8 tasks per module. Include specif
 
 async function generateWithGeminiDirect(topic: string) {
   if (!GEMINI_API_KEY) {
-    console.warn('⚠️ Gemini API key not configured');
-    throw new Error('Gemini API key not configured');
+    console.warn('⚠️ Gemini API key not configured, using fallback roadmap');
+    return createFallbackRoadmap(topic);
   }
 
   const prompt = `Create a comprehensive learning roadmap for: "${topic}" with creative and practical approaches in TUF Striver's format.
