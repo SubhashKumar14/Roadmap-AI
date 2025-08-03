@@ -593,8 +593,8 @@ const Index = () => {
         try {
           await realtimeService.syncUserProfile(user.id, updatedProfile);
           console.log('✅ Profile updated in real-time service');
-        } catch (realtimeError) {
-          console.log('🌐 Real-time service unavailable, using fallback');
+        } catch (realtimeError: any) {
+          console.log('🌐 Real-time service unavailable:', realtimeError?.message || realtimeError);
           await userService.updateProfile(user.id, updatedProfile);
         }
       }
