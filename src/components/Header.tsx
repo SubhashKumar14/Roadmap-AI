@@ -23,6 +23,7 @@ import {
   Zap
 } from "lucide-react"
 import { useAuth } from "@/components/auth/DatabaseAuthProvider"
+import { ConnectionStatus } from "@/components/ConnectionStatus"
 
 interface HeaderProps {
   activeTab: string
