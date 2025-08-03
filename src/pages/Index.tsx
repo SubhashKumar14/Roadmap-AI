@@ -551,7 +551,7 @@ const Index = () => {
           console.log('✅ Profile updated in real-time service');
         } catch (realtimeError: any) {
           console.log('🌐 Real-time service unavailable:', realtimeError?.message || realtimeError);
-          await userService.updateProfile(user.id, updatedProfile);
+          // Profile updates will be handled by database service
         }
       }
       setUserProfile(updatedProfile)
