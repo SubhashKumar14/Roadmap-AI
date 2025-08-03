@@ -185,16 +185,53 @@ const Index = () => {
       }
 
       try {
-        console.log('Loading user profile...');
-        const profileData = await authService.getProfile(user!.id);
-        setUserProfile({
-          ...profileData,
-          name: user!.user_metadata?.full_name || user!.email?.split('@')[0] || profileData.name,
-          email: user!.email || profileData.email
-        })
-        console.log('User profile loaded:', profileData);
+        console.log('Loading user profile from real-time service...');
+        const profileData = await realtimeService.getUserProfile(user!.id);
+        if (profileData) {
+          setUserProfile({
+            name: profileData.name || user!.user_metadata?.full_name || user!.email?.split('@')[0] || "",
+            email: profileData.email || user!.email || "",
+            bio: profileData.bio || "",
+            location: profileData.location || "",
+            githubUsername: profileData.github_username || "",
+            twitterUsername: profileData.twitter_username || "",
+            joinDate: profileData.created_at ? new Date(profileData.created_at).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' }),
+            rank: null,
+            learningGoals: profileData.learning_goals || [],
+            preferences: profileData.preferences || {
+              emailNotifications: true,
+              weeklyDigest: true,
+              achievementAlerts: true
+            }
+          });
+          console.log('User profile loaded from real-time service:', profileData);
+        } else {
+          // Create initial profile if none exists
+          const initialProfile = {
+            name: user!.user_metadata?.full_name || user!.email?.split('@')[0] || "",
+            email: user!.email || "",
+            bio: "",
+            location: "",
+            githubUsername: "",
+            twitterUsername: "",
+            learningGoals: [],
+            preferences: {
+              emailNotifications: true,
+              weeklyDigest: true,
+              achievementAlerts: true
+            }
+          };
+          setUserProfile(prev => ({
+            ...prev,
+            ...initialProfile,
+            joinDate: new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
+          }));
+
+          // Sync profile to real-time service
+          await realtimeService.syncUserProfile(user!.id, initialProfile);
+        }
       } catch (profileError) {
-        console.error('❌ Error loading profile:', profileError);
+        console.error('❌ Error loading profile from real-time service:', profileError);
         // Use minimal profile data from auth if loading fails
         setUserProfile(prev => ({
           ...prev,
@@ -334,7 +371,7 @@ const Index = () => {
           await userService.updateActivity(user!.id, 'task_completed');
           await progressService.checkAchievements(user!.id);
         }
-        console.log('�� Backend update successful');
+        console.log('✅ Backend update successful');
       } catch (backendError) {
         console.log('🌐 Backend unavailable, using local storage');
         updateProgressLocally(roadmapId, moduleId, taskId, newCompletedState);
