@@ -13,7 +13,7 @@ const queryClient = new QueryClient();
 const App = () => {
   return (
     <ErrorBoundary>
-      <SupabaseAuthProvider>
+      <DatabaseAuthProvider>
         <QueryClientProvider client={queryClient}>
           <TooltipProvider>
             <Toaster />
@@ -26,7 +26,7 @@ const App = () => {
             </BrowserRouter>
           </TooltipProvider>
         </QueryClientProvider>
-      </SupabaseAuthProvider>
+      </DatabaseAuthProvider>
     </ErrorBoundary>
   );
 };
