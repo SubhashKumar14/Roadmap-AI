@@ -274,7 +274,10 @@ ALTER PUBLICATION supabase_realtime ADD TABLE achievements;`
             <Alert>
               <Info className="h-4 w-4" />
               <AlertDescription>
-                Missing tables: {status.missingTables.join(', ')}
+                Missing tables: {status.missingTables.join(', ')}<br/>
+                <span className="text-sm text-muted-foreground mt-1 block">
+                  Note: You may see error messages in the console until the database setup is complete. This is normal.
+                </span>
               </AlertDescription>
             </Alert>
           )}
