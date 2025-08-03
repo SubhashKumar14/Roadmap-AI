@@ -291,8 +291,8 @@ class RealtimeService {
         })
 
       if (error) {
-        console.error('Error syncing profile:', error)
-        throw error
+        console.error('Error syncing profile:', error.message || error)
+        throw new Error(`Failed to sync profile: ${error.message || 'Unknown error'}`)
       }
 
       return data
