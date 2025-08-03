@@ -22,7 +22,7 @@ import {
   BookOpen,
   Zap
 } from "lucide-react"
-import { useAuth } from "@/components/auth/SupabaseAuthProvider"
+import { useAuth } from "@/components/auth/DatabaseAuthProvider"
 
 interface HeaderProps {
   activeTab: string
