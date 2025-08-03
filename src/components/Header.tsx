@@ -88,6 +88,7 @@ export function Header({ activeTab, onTabChange, userStats }: HeaderProps) {
 
         {/* User Section */}
         <div className="flex items-center space-x-4">
+          <ConnectionStatus />
           <ModeToggle />
           
           {!user && (
