@@ -274,9 +274,10 @@ class RealtimeService {
       }
 
       return data
-    } catch (error) {
-      console.error('Failed to save roadmap:', error)
-      throw error
+    } catch (error: any) {
+      const errorMessage = error?.message || 'Unknown error saving roadmap'
+      console.error('Failed to save roadmap:', errorMessage)
+      throw new Error(errorMessage)
     }
   }
 
