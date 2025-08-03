@@ -430,6 +430,11 @@ class DatabaseService {
 
   // Roadmap management
   async saveRoadmap(userId: string, roadmap: any): Promise<{ roadmap: Roadmap | null; error: string | null }> {
+    // Use fallback in cloud environment
+    if (this.isCloudEnvironment) {
+      return this.saveRoadmapFallback(userId, roadmap)
+    }
+
     try {
       const response = await fetch(`${this.baseUrl}/roadmap/save`, {
         method: 'POST',
@@ -451,10 +456,34 @@ class DatabaseService {
 
       return { roadmap: data.roadmap, error: null }
     } catch (error: any) {
-      const errorMessage = error?.message || 'Unknown error saving roadmap'
-      console.error('Failed to save roadmap:', errorMessage)
-      return { roadmap: null, error: errorMessage }
+      console.warn('API not available, using fallback:', error?.message)
+      return this.saveRoadmapFallback(userId, roadmap)
     }
+  }
+
+  private saveRoadmapFallback(userId: string, roadmap: any): Promise<{ roadmap: Roadmap | null; error: string | null }> {
+    return new Promise((resolve) => {
+      const savedRoadmap: Roadmap = {
+        id: roadmap.id || 'roadmap-' + Date.now(),
+        user_id: userId,
+        title: roadmap.title,
+        description: roadmap.description,
+        difficulty: roadmap.difficulty,
+        estimated_duration: roadmap.estimatedDuration,
+        ai_provider: roadmap.aiProvider,
+        category: roadmap.category,
+        modules: roadmap.modules,
+        progress: roadmap.progress || 0,
+        created_at: new Date().toISOString()
+      }
+
+      // Save to localStorage
+      const roadmaps = JSON.parse(localStorage.getItem('ai-roadmap-roadmaps') || '[]')
+      roadmaps.unshift(savedRoadmap)
+      localStorage.setItem('ai-roadmap-roadmaps', JSON.stringify(roadmaps))
+
+      resolve({ roadmap: savedRoadmap, error: null })
+    })
   }
 
   async getUserRoadmaps(userId: string): Promise<Roadmap[]> {
