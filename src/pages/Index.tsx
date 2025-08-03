@@ -149,7 +149,7 @@ const Index = () => {
       console.log('👤 User name:', user!.user_metadata?.full_name || user!.email?.split('@')[0]);
 
       // Sync user with backend
-      console.log('🔄 Syncing user with backend...');
+      console.log('�� Syncing user with backend...');
       const syncResult = await authService.syncUser(
         user!.id,
         user!.email || "",
@@ -428,8 +428,8 @@ const Index = () => {
           await realtimeService.updateStats(updatedStats);
           await userService.updateActivity(user!.id, 'task_completed');
         }
-      } catch (realtimeError) {
-        console.log('🌐 Real-time service unavailable, using fallback');
+      } catch (realtimeError: any) {
+        console.log('🌐 Real-time service unavailable:', realtimeError?.message || realtimeError);
         try {
           await roadmapService.updateProgress(roadmapId, moduleId, taskId, newCompletedState);
           if (newCompletedState && !wasCompleted) {
@@ -437,8 +437,8 @@ const Index = () => {
             await progressService.checkAchievements(user!.id);
           }
           console.log('✅ Fallback update successful');
-        } catch (fallbackError) {
-          console.log('🌐 All services unavailable, using local storage');
+        } catch (fallbackError: any) {
+          console.log('🌐 All services unavailable, using local storage:', fallbackError?.message || fallbackError);
           updateProgressLocally(roadmapId, moduleId, taskId, newCompletedState);
         }
       }
