@@ -158,7 +158,7 @@ const Index = () => {
       setDatabaseStatus(dbStatus);
 
       if (dbStatus.setupRequired) {
-        console.warn('⚠��� Database setup required:', dbStatus.error);
+        console.warn('⚠️ Database setup required:', dbStatus.error);
         setShowDatabaseSetup(true);
         // Continue with fallback data loading
       }
@@ -197,15 +197,22 @@ const Index = () => {
           console.log('No stats found, keeping empty state');
         }
       } catch (statsError: any) {
-        console.error('❌ Error loading stats from real-time service:', statsError?.message || statsError);
-        // Fallback to existing API service
-        try {
-          const fallbackStats = await userService.getStats(user!.id);
-          setUserStats(fallbackStats.stats || fallbackStats);
-          console.log('✅ Stats loaded from fallback API service');
-        } catch (fallbackError: any) {
-          console.error('❌ Fallback stats loading failed:', fallbackError?.message || fallbackError);
-          console.log('Using empty stats state');
+        const errorMsg = statsError?.message || statsError;
+        console.error('❌ Error loading stats from real-time service:', errorMsg);
+
+        if (isTableMissingError(statsError)) {
+          console.warn('📋 Database tables not set up, using fallback stats');
+          setShowDatabaseSetup(true);
+        } else {
+          // Fallback to existing API service
+          try {
+            const fallbackStats = await userService.getStats(user!.id);
+            setUserStats(fallbackStats.stats || fallbackStats);
+            console.log('✅ Stats loaded from fallback API service');
+          } catch (fallbackError: any) {
+            console.error('❌ Fallback stats loading failed:', fallbackError?.message || fallbackError);
+            console.log('Using empty stats state');
+          }
         }
       }
 
