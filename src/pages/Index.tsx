@@ -354,17 +354,47 @@ const Index = () => {
         isRealCompletion: newCompletedState && !wasCompleted
       });
 
-      // Try backend update first, fallback to local storage
+      // Try real-time service first, then fallback
       try {
-        await roadmapService.updateProgress(roadmapId, moduleId, taskId, newCompletedState);
+        await realtimeService.updateProgress(roadmapId, moduleId, taskId, newCompletedState);
+        console.log('✅ Real-time update successful');
+
+        // Update stats in real-time if task was completed
         if (newCompletedState && !wasCompleted) {
+          const updatedStats = {
+            total_completed: userStats.totalCompleted + 1,
+            weekly_progress: userStats.weeklyProgress + 1,
+            experience_points: userStats.experiencePoints + 10,
+            level: Math.floor((userStats.experiencePoints + 10) / 100) + 1
+          };
+
+          // Update problem counts based on difficulty
+          if (currentTask?.difficulty) {
+            const difficulty = currentTask.difficulty.toLowerCase();
+            const problemsSolved = { ...userStats.problemsSolved };
+            if (problemsSolved[difficulty] !== undefined) {
+              problemsSolved[difficulty] += 1;
+              problemsSolved.total += 1;
+              updatedStats.problems_solved = problemsSolved;
+            }
+          }
+
+          await realtimeService.updateStats(updatedStats);
           await userService.updateActivity(user!.id, 'task_completed');
-          await progressService.checkAchievements(user!.id);
         }
-        console.log('✅ Backend update successful');
-      } catch (backendError) {
-        console.log('🌐 Backend unavailable, using local storage');
-        updateProgressLocally(roadmapId, moduleId, taskId, newCompletedState);
+      } catch (realtimeError) {
+        console.log('🌐 Real-time service unavailable, using fallback');
+        try {
+          await roadmapService.updateProgress(roadmapId, moduleId, taskId, newCompletedState);
+          if (newCompletedState && !wasCompleted) {
+            await userService.updateActivity(user!.id, 'task_completed');
+            await progressService.checkAchievements(user!.id);
+          }
+          console.log('✅ Fallback update successful');
+        } catch (fallbackError) {
+          console.log('🌐 All services unavailable, using local storage');
+          updateProgressLocally(roadmapId, moduleId, taskId, newCompletedState);
+        }
       }
 
       // Update local state
