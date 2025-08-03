@@ -112,9 +112,31 @@ const Index = () => {
     }
   }, [loading, user])
 
+  // Load user roadmaps from real-time service
+  const loadUserRoadmaps = async () => {
+    if (!user?.id) return
+
+    try {
+      console.log('🗂️ Loading roadmaps from real-time service...');
+      const roadmapsData = await realtimeService.getUserRoadmaps(user.id);
+      setRoadmaps(Array.isArray(roadmapsData) ? roadmapsData : []);
+      console.log('User roadmaps loaded:', roadmapsData.length);
+    } catch (error) {
+      console.error('❌ Error loading roadmaps from real-time service:', error);
+      // Fallback to existing API service
+      try {
+        const fallbackData = await roadmapService.getUserRoadmaps(user.id);
+        setRoadmaps(Array.isArray(fallbackData) ? fallbackData : []);
+      } catch (fallbackError) {
+        console.error('❌ Fallback roadmap loading failed:', fallbackError);
+        setRoadmaps([]);
+      }
+    }
+  }
+
   const initializeUserData = async () => {
     try {
-      console.log('�� Initializing user data for:', user!.id);
+      console.log('🚀 Initializing user data for:', user!.id);
       console.log('📧 User email:', user!.email);
       console.log('👤 User name:', user!.user_metadata?.full_name || user!.email?.split('@')[0]);
 
