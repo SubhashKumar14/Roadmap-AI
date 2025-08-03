@@ -762,45 +762,136 @@ function generateId() {
 
 function createFallbackRoadmap(topic: string) {
   console.log('🔄 Creating fallback roadmap for:', topic);
+
+  const modules = [
+    {
+      id: '1',
+      title: 'Getting Started',
+      description: `Introduction to ${topic} fundamentals`,
+      completed: false,
+      difficulty: 'Easy',
+      estimatedTime: '3 hours',
+      tasks: [
+        {
+          id: '1-1',
+          title: `${topic} Basics`,
+          completed: false,
+          difficulty: 'Easy',
+          type: 'Theory',
+          estimatedTime: '45 minutes',
+          description: `Learn the fundamental concepts of ${topic}`,
+          learningObjectives: ['Understand core principles', 'Learn key terminology'],
+          prerequisites: ['Basic computer literacy'],
+          resources: {
+            articles: [`Introduction to ${topic}`, `${topic} concepts explained`],
+            documentation: [`${topic} official documentation`],
+            practice: ['Interactive tutorials'],
+            videos: []
+          }
+        },
+        {
+          id: '1-2',
+          title: `${topic} Tools and Setup`,
+          completed: false,
+          difficulty: 'Easy',
+          type: 'Practice',
+          estimatedTime: '30 minutes',
+          description: `Set up your development environment for ${topic}`,
+          learningObjectives: ['Configure development environment', 'Install necessary tools'],
+          prerequisites: ['Completed basics'],
+          resources: {
+            articles: [`${topic} setup guide`],
+            documentation: [`${topic} installation docs`],
+            practice: ['Environment setup'],
+            videos: []
+          }
+        }
+      ]
+    },
+    {
+      id: '2',
+      title: 'Core Concepts',
+      description: `Deep dive into ${topic} core concepts`,
+      completed: false,
+      difficulty: 'Medium',
+      estimatedTime: '4 hours',
+      tasks: [
+        {
+          id: '2-1',
+          title: `Advanced ${topic} Concepts`,
+          completed: false,
+          difficulty: 'Medium',
+          type: 'Theory',
+          estimatedTime: '1 hour',
+          description: `Explore advanced concepts and patterns in ${topic}`,
+          learningObjectives: ['Master advanced concepts', 'Understand best practices'],
+          prerequisites: ['Completed basics and setup'],
+          resources: {
+            articles: [`Advanced ${topic} patterns`, `${topic} best practices`],
+            documentation: [`${topic} advanced guide`],
+            practice: ['Concept exercises'],
+            videos: []
+          }
+        },
+        {
+          id: '2-2',
+          title: `${topic} Problem Solving`,
+          completed: false,
+          difficulty: 'Medium',
+          type: 'Practice',
+          estimatedTime: '2 hours',
+          description: `Practice solving problems using ${topic}`,
+          learningObjectives: ['Apply learned concepts', 'Develop problem-solving skills'],
+          prerequisites: ['Understanding of core concepts'],
+          resources: {
+            articles: [`${topic} problem solving strategies`],
+            documentation: [`${topic} examples`],
+            practice: ['Practice problems', 'Coding challenges'],
+            videos: []
+          }
+        }
+      ]
+    },
+    {
+      id: '3',
+      title: 'Practical Application',
+      description: `Apply your ${topic} knowledge in real projects`,
+      completed: false,
+      difficulty: 'Medium',
+      estimatedTime: '5 hours',
+      tasks: [
+        {
+          id: '3-1',
+          title: `Build a ${topic} Project`,
+          completed: false,
+          difficulty: 'Medium',
+          type: 'Project',
+          estimatedTime: '3 hours',
+          description: `Create a practical project using ${topic}`,
+          learningObjectives: ['Apply knowledge practically', 'Build portfolio project'],
+          prerequisites: ['Completed core concepts'],
+          resources: {
+            articles: [`${topic} project ideas`, `${topic} project tutorial`],
+            documentation: [`${topic} project examples`],
+            practice: ['Hands-on project building'],
+            videos: []
+          }
+        }
+      ]
+    }
+  ];
+
   return {
     id: generateId(),
     title: `${topic} Learning Path`,
-    description: `A basic learning roadmap for ${topic}. Some features may be limited due to API availability.`,
+    description: `A comprehensive learning roadmap for ${topic}. Start your journey with fundamentals and progress to practical applications.`,
     difficulty: 'beginner',
     estimatedDuration: '4-6 weeks',
     aiProvider: 'fallback',
     category: 'General',
     createdAt: new Date().toISOString(),
     progress: 0,
-    modules: [
-      {
-        id: '1',
-        title: 'Getting Started',
-        description: `Introduction to ${topic}`,
-        completed: false,
-        difficulty: 'Easy',
-        estimatedTime: '2 hours',
-        tasks: [
-          {
-            id: '1-1',
-            title: `Learn ${topic} Fundamentals`,
-            completed: false,
-            difficulty: 'Easy',
-            type: 'Theory',
-            estimatedTime: '30 minutes',
-            description: `Basic introduction to ${topic} concepts`,
-            learningObjectives: ['Understand the basics', 'Get familiar with terminology'],
-            prerequisites: ['Basic computer knowledge'],
-            resources: {
-              articles: [`${topic} introduction`],
-              documentation: [`${topic} official docs`],
-              practice: ['Online tutorials'],
-              videos: []
-            }
-          }
-        ]
-      }
-    ]
+    modules
   };
 }
 
