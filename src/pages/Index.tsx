@@ -178,14 +178,16 @@ const Index = () => {
         } else {
           console.log('No stats found, keeping empty state');
         }
-      } catch (statsError) {
-        console.error('❌ Error loading stats from real-time service:', statsError);
+      } catch (statsError: any) {
+        console.error('❌ Error loading stats from real-time service:', statsError?.message || statsError);
         // Fallback to existing API service
         try {
           const fallbackStats = await userService.getStats(user!.id);
           setUserStats(fallbackStats.stats || fallbackStats);
-        } catch (fallbackError) {
-          console.error('❌ Fallback stats loading failed:', fallbackError);
+          console.log('✅ Stats loaded from fallback API service');
+        } catch (fallbackError: any) {
+          console.error('❌ Fallback stats loading failed:', fallbackError?.message || fallbackError);
+          console.log('Using empty stats state');
         }
       }
 
