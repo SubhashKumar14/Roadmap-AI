@@ -389,8 +389,9 @@ class RealtimeService {
       }
 
       return data || null
-    } catch (error) {
-      console.error('Failed to fetch profile:', error)
+    } catch (error: any) {
+      const errorMessage = error?.message || 'Unknown error fetching profile'
+      console.error('Failed to fetch profile:', errorMessage)
       return null
     }
   }
