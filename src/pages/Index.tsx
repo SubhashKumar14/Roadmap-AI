@@ -543,14 +543,7 @@ const Index = () => {
           "Task marked as incomplete.",
       })
 
-      // Emit progress update
-      socketService.emitProgressUpdate({
-        roadmapId,
-        moduleId,
-        taskId,
-        completed: newCompletedState,
-        timestamp: new Date().toISOString()
-      })
+      // Real-time progress sync handled by realtimeService
 
     } catch (error) {
       console.error('❌ Error updating task:', error)
