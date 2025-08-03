@@ -305,6 +305,9 @@ class RealtimeService {
 
   // Sync user profile data
   async syncUserProfile(userId: string, profileData: any) {
+    if (!isSupabaseConfigured()) {
+      throw new Error('Supabase not configured')
+    }
     try {
       const { data, error } = await supabase
         .from('user_profiles')
