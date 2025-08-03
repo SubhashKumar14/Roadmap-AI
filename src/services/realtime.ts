@@ -1,12 +1,6 @@
 import { supabase } from '@/lib/supabase'
 import { RealtimeChannel } from '@supabase/supabase-js'
-
-// Check if Supabase is properly configured
-const isSupabaseConfigured = () => {
-  const url = import.meta.env.VITE_SUPABASE_URL
-  const key = import.meta.env.VITE_SUPABASE_ANON_KEY
-  return url && key && url !== 'https://placeholder.supabase.co' && key !== 'placeholder-key'
-}
+import { isSupabaseConfigured, isTableMissingError, isDatabaseConnectionError } from './databaseSetup'
 
 interface UserProgress {
   user_id: string
