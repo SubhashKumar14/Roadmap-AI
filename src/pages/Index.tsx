@@ -187,45 +187,18 @@ const Index = () => {
     } catch (error) {
       console.error('❌ Error initializing user data:', error)
 
-      // Set zero defaults if everything fails - only real progress counts
-      setUserStats({
-        streak: 0,
-        totalCompleted: 0,
-        level: 1,
-        experiencePoints: 0,
-        activeLearningDays: [],
-        weeklyGoal: 10,
-        weeklyProgress: 0,
-        roadmapsCompleted: 0,
-        totalStudyTime: 0,
-        problemsSolved: { easy: 0, medium: 0, hard: 0, total: 0 },
-        globalRanking: 999999,
-        attendedContests: 0
-      });
-
-      setUserProfile({
-        name: user!.user_metadata?.full_name || user!.email?.split('@')[0] || "User",
-        email: user!.email || "user@example.com",
-        bio: "",
-        location: "",
-        githubUsername: "",
-        twitterUsername: "",
-        joinDate: "January 2024",
-        rank: 999999,
-        learningGoals: [],
-        preferences: {
-          emailNotifications: true,
-          weeklyDigest: true,
-          achievementAlerts: true
-        }
-      });
-
-      setRoadmaps([]);
-      setAchievements([]);
+      // Keep current states if everything fails - no demo data
+      setUserProfile(prev => ({
+        ...prev,
+        name: user!.user_metadata?.full_name || user!.email?.split('@')[0] || "",
+        email: user!.email || "",
+        joinDate: new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
+      }));
 
       toast({
-        title: "Welcome! 🌐",
-        description: "Ready to start your real learning journey. No demo data - only your actual progress.",
+        title: "Connection Issue",
+        description: "Some data couldn't be loaded. Your progress will sync when connection is restored.",
+        variant: "destructive"
       })
     } finally {
       setIsLoading(false)
@@ -373,7 +346,7 @@ const Index = () => {
           return newStats;
         });
 
-        console.log('���� Task unchecked - stats decremented');
+        console.log('📊 Task unchecked - stats decremented');
       }
 
       toast({
