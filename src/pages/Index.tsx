@@ -149,7 +149,7 @@ const Index = () => {
       console.log('👤 User name:', user!.user_metadata?.full_name || user!.email?.split('@')[0]);
 
       // Sync user with backend
-      console.log('�� Syncing user with backend...');
+      console.log('🔄 Syncing user with backend...');
       const syncResult = await authService.syncUser(
         user!.id,
         user!.email || "",
@@ -367,8 +367,8 @@ const Index = () => {
 
       // Refresh roadmaps to ensure sync
       await loadUserRoadmaps();
-    } catch (error) {
-      console.error('❌ Error saving roadmap to real-time service:', error);
+    } catch (error: any) {
+      console.error('❌ Error saving roadmap to real-time service:', error?.message || error);
 
       // Fallback to local state update only
       setRoadmaps(prev => [newRoadmap, ...prev])
@@ -378,6 +378,7 @@ const Index = () => {
       toast({
         title: "Roadmap Generated! 🎉",
         description: `Your "${newRoadmap.title}" roadmap is ready. Note: Real-time sync unavailable.`,
+        variant: "default"
       })
     }
   }
