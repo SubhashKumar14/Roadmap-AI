@@ -177,20 +177,7 @@ const Index = () => {
         const errorMsg = statsError?.message || statsError;
         console.error('❌ Error loading stats from real-time service:', errorMsg);
 
-        if (isTableMissingError(statsError)) {
-          console.warn('📋 Database tables not set up, using fallback stats');
-          setShowDatabaseSetup(true);
-        } else {
-          // Fallback to existing API service
-          try {
-            const fallbackStats = await userService.getStats(user!.id);
-            setUserStats(fallbackStats.stats || fallbackStats);
-            console.log('✅ Stats loaded from fallback API service');
-          } catch (fallbackError: any) {
-            console.error('❌ Fallback stats loading failed:', fallbackError?.message || fallbackError);
-            console.log('Using empty stats state');
-          }
-        }
+        console.warn('📋 Error loading stats, using empty state');
       }
 
       try {
