@@ -262,6 +262,11 @@ class DatabaseService {
         return { user, error: null }
       }
 
+      // In cloud environment, return null if no cached user
+      if (this.isCloudEnvironment) {
+        return { user: null, error: null }
+      }
+
       const response = await fetch(`${this.baseUrl}/auth/me`, {
         credentials: 'include',
       })
@@ -275,15 +280,19 @@ class DatabaseService {
       }
 
       const data = await response.json()
-      
+
       // Cache user data
       localStorage.setItem('ai-roadmap-user', JSON.stringify(data.user))
-      
+
       return { user: data.user, error: null }
     } catch (error: any) {
-      const errorMessage = error?.message || 'Unknown error getting current user'
-      console.error('Failed to get current user:', errorMessage)
-      return { user: null, error: errorMessage }
+      console.warn('API not available, checking localStorage only')
+      const cachedUser = localStorage.getItem('ai-roadmap-user')
+      if (cachedUser) {
+        const user = JSON.parse(cachedUser)
+        return { user, error: null }
+      }
+      return { user: null, error: null }
     }
   }
 
