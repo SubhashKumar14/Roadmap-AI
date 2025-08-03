@@ -70,7 +70,7 @@ api.interceptors.response.use(
     return response;
   },
   async (error) => {
-    console.log('🚨 INTERCEPTOR TRIGGERED - Processing error...');
+    console.log('��� INTERCEPTOR TRIGGERED - Processing error...');
 
     const url = error.config?.url || 'unknown';
     const status = error.response?.status || 'no-response';
@@ -622,7 +622,7 @@ Make it comprehensive with 6-10 modules and 4-8 tasks per module. Include specif
 
 async function generateWithGeminiDirect(topic: string) {
   if (!GEMINI_API_KEY) {
-    console.warn('⚠️ Gemini API key not configured, using fallback roadmap');
+    console.warn('⚠��� Gemini API key not configured, using fallback roadmap');
     return createFallbackRoadmap(topic);
   }
 
@@ -664,8 +664,8 @@ Please structure your response as a JSON object with the same format as shown ea
 
 async function generateWithPerplexityDirect(topic: string) {
   if (!PERPLEXITY_API_KEY) {
-    console.warn('⚠️ Perplexity API key not configured');
-    throw new Error('Perplexity API key not configured');
+    console.warn('⚠️ Perplexity API key not configured, using fallback roadmap');
+    return createFallbackRoadmap(topic);
   }
 
   const prompt = `Create a comprehensive learning roadmap for: "${topic}" with current trends and up-to-date resources in TUF Striver's format.
@@ -1057,7 +1057,7 @@ export const progressService = {
     return await apiCallWithFallback(
       () => api.post(`/progress/${supabaseId}/check-achievements`),
       async () => {
-        console.log('🏆 Direct fallback: check achievements');
+        console.log('��� Direct fallback: check achievements');
         const achievements = JSON.parse(localStorage.getItem('ai-roadmap-achievements') || '[]');
         return { data: { newAchievements: [], totalEarned: achievements.length } };
       }
@@ -1189,7 +1189,7 @@ export function updateProgressLocally(roadmapId: string, moduleId: string, taskI
   // Save updated roadmaps
   localStorage.setItem('ai-roadmap-roadmaps', JSON.stringify(roadmaps));
 
-  console.log('📊 Progress updated (real user action):', {
+  console.log('�� Progress updated (real user action):', {
     roadmapId,
     moduleId,
     taskId,
