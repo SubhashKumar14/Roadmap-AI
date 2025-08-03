@@ -64,16 +64,29 @@ class QdrantDatabaseService {
     this.qdrantUrl = import.meta.env.VITE_QDRANT_URL || 'http://localhost:6333'
     this.qdrantApiKey = import.meta.env.VITE_QDRANT_API_KEY || ''
     this.isCloudEnvironment = this.detectCloudEnvironment()
-    
+    this.qdrantAvailable = false
+
     // Collection names for different data types
     this.collections = {
       users: 'users',
-      roadmaps: 'roadmaps', 
+      roadmaps: 'roadmaps',
       progress: 'user_progress',
       sessions: 'user_sessions'
     }
 
-    this.initializeCollections()
+    console.log('🔗 Qdrant Configuration:', {
+      url: this.qdrantUrl !== 'http://localhost:6333' ? 'configured' : 'default/missing',
+      apiKey: this.qdrantApiKey ? 'configured' : 'missing',
+      isCloud: this.isCloudEnvironment
+    })
+
+    // Only initialize if we have proper configuration and we're not trying to use localhost in cloud
+    if (this.qdrantUrl !== 'http://localhost:6333' && this.qdrantApiKey) {
+      this.initializeCollections()
+    } else {
+      console.warn('⚠️ Qdrant not properly configured, using localStorage fallback mode')
+      this.qdrantAvailable = false
+    }
   }
 
   detectCloudEnvironment() {
