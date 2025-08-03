@@ -179,9 +179,7 @@ const Index = () => {
 
       toast({
         title: "Welcome back! 👋",
-        description: isCloudEnvironment ?
-          "Running in cloud mode - all progress will be real and saved locally." :
-          "Your learning journey continues with real progress tracking.",
+        description: "Your learning data has been loaded successfully.",
       })
 
     } catch (error) {
