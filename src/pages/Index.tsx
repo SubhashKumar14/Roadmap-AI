@@ -350,10 +350,17 @@ const Index = () => {
                                 window.location.hostname.includes('vercel.app') ||
                                 window.location.hostname.includes('netlify.app');
 
-      toast({
-        title: "Welcome back! 👋",
-        description: "Your learning data has been loaded successfully.",
-      })
+      if (databaseStatus?.tablesExist) {
+        toast({
+          title: "Welcome back! 👋",
+          description: "Your learning data has been loaded successfully with real-time sync enabled.",
+        });
+      } else {
+        toast({
+          title: "Welcome back! 👋",
+          description: "Running in fallback mode. Set up database for full real-time features.",
+        });
+      }
 
     } catch (error) {
       console.error('❌ Error initializing user data:', error)
