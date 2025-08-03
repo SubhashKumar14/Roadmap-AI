@@ -263,26 +263,40 @@ const Index = () => {
           await realtimeService.syncUserProfile(user!.id, initialProfile);
         }
       } catch (profileError: any) {
-        console.error('❌ Error loading profile from real-time service:', profileError?.message || profileError);
-        // Fallback to existing API service
-        try {
-          const fallbackProfile = await authService.getProfile(user!.id);
-          setUserProfile(prev => ({
-            ...prev,
-            ...fallbackProfile,
-            name: fallbackProfile.name || user!.user_metadata?.full_name || user!.email?.split('@')[0] || "",
-            email: fallbackProfile.email || user!.email || ""
-          }));
-          console.log('✅ Profile loaded from fallback API service');
-        } catch (fallbackError: any) {
-          console.error('❌ Fallback profile loading failed:', fallbackError?.message || fallbackError);
-          // Use minimal profile data from auth if loading fails
+        const errorMsg = profileError?.message || profileError;
+        console.error('❌ Error loading profile from real-time service:', errorMsg);
+
+        if (isTableMissingError(profileError)) {
+          console.warn('📋 Database tables not set up, using fallback profile');
+          setShowDatabaseSetup(true);
+          // Use auth data directly
           setUserProfile(prev => ({
             ...prev,
             name: user!.user_metadata?.full_name || user!.email?.split('@')[0] || "",
             email: user!.email || "",
             joinDate: new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
           }));
+        } else {
+          // Fallback to existing API service
+          try {
+            const fallbackProfile = await authService.getProfile(user!.id);
+            setUserProfile(prev => ({
+              ...prev,
+              ...fallbackProfile,
+              name: fallbackProfile.name || user!.user_metadata?.full_name || user!.email?.split('@')[0] || "",
+              email: fallbackProfile.email || user!.email || ""
+            }));
+            console.log('✅ Profile loaded from fallback API service');
+          } catch (fallbackError: any) {
+            console.error('❌ Fallback profile loading failed:', fallbackError?.message || fallbackError);
+            // Use minimal profile data from auth if loading fails
+            setUserProfile(prev => ({
+              ...prev,
+              name: user!.user_metadata?.full_name || user!.email?.split('@')[0] || "",
+              email: user!.email || "",
+              joinDate: new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
+            }));
+          }
         }
       }
 
