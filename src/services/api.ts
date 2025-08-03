@@ -728,6 +728,11 @@ async function enhanceWithYouTubeVideosDirect(roadmap: any) {
 }
 
 async function searchYouTubeVideosDirect(query: string) {
+  if (!YOUTUBE_API_KEY) {
+    console.warn('⚠️ YouTube API key not configured, skipping video search');
+    return [];
+  }
+
   try {
     const response = await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(query)}&type=video&maxResults=3&key=${YOUTUBE_API_KEY}`);
 
@@ -971,7 +976,7 @@ export const userService = {
     return await apiCallWithFallback(
       () => api.put(`/user/api-keys/${supabaseId}`, { provider, apiKey }),
       async () => {
-        console.log('�� Direct fallback: update API key');
+        console.log('🔑 Direct fallback: update API key');
         return { data: { success: true } };
       }
     );
