@@ -9,7 +9,7 @@ import { Progress } from "@/components/ui/progress"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Loader2, Sparkles, Brain, Zap, Search, ArrowRight } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
-import { useAuth } from "@/components/auth/SupabaseAuthProvider"
+import { useAuth } from "@/components/auth/DatabaseAuthProvider"
 import { aiService } from "@/services/api"
 
 interface RoadmapGeneratorProps {
