@@ -130,14 +130,15 @@ class WebSocketService {
     if (this.reconnectAttempts < this.maxReconnectAttempts) {
       this.reconnectAttempts++
       const delay = Math.min(1000 * Math.pow(2, this.reconnectAttempts), 30000)
-      
-      console.log(`⏳ Reconnecting in ${delay}ms (attempt ${this.reconnectAttempts}/${this.maxReconnectAttempts})`)
-      
+
+      console.log(`⏳ WebSocket reconnecting in ${delay}ms (attempt ${this.reconnectAttempts}/${this.maxReconnectAttempts})`)
+
       setTimeout(() => {
+        console.log('🔄 Attempting WebSocket reconnection...')
         this.connect()
       }, delay)
     } else {
-      console.error('🔴 Max reconnection attempts reached. Please refresh the page.')
+      console.error('🔴 Max WebSocket reconnection attempts reached. Continuing without real-time features.')
       window.dispatchEvent(new CustomEvent('websocket-connection-failed'))
     }
   }
