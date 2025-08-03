@@ -99,11 +99,16 @@ class QdrantDatabaseService {
 
   async initializeCollections() {
     try {
-      // Test connection first
+      // Test connection first with manual timeout
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), 5000) // 5 second timeout
+
       const testResponse = await fetch(`${this.qdrantUrl}/`, {
         headers: this.getHeaders(),
-        signal: AbortSignal.timeout(5000) // 5 second timeout
+        signal: controller.signal
       })
+
+      clearTimeout(timeoutId)
 
       if (!testResponse.ok) {
         throw new Error('Qdrant connection test failed')
