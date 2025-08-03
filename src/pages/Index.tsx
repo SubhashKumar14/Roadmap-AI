@@ -402,7 +402,7 @@ const Index = () => {
           }
 
           await realtimeService.updateStats(updatedStats);
-          await userService.updateActivity(user!.id, 'task_completed');
+          // Activity tracking handled by realtimeService
         }
       } catch (realtimeError: any) {
         console.log('🌐 Real-time service unavailable:', realtimeError?.message || realtimeError);
