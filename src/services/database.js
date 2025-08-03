@@ -85,6 +85,7 @@ class QdrantDatabaseService {
       this.initializeCollections()
     } else {
       console.warn('⚠️ Qdrant not properly configured, using localStorage fallback mode')
+      console.log('📱 Application will work fully offline with localStorage persistence')
       this.qdrantAvailable = false
     }
   }
