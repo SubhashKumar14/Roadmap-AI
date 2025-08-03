@@ -162,8 +162,12 @@ io.on('connection', (socket) => {
     io.emit('new-roadmap-shared', data);
   });
 
-  socket.on('disconnect', () => {
-    console.log('User disconnected:', socket.id);
+  socket.on('disconnect', (reason) => {
+    console.log('❌ WebSocket user disconnected:', socket.id, 'Reason:', reason);
+  });
+
+  socket.on('connect_error', (error) => {
+    console.error('🚫 WebSocket connection error on server:', error);
   });
 });
 
