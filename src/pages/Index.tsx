@@ -125,16 +125,19 @@ const Index = () => {
       console.log('🗂️ Loading roadmaps from real-time service...');
       const roadmapsData = await realtimeService.getUserRoadmaps(user.id);
       setRoadmaps(Array.isArray(roadmapsData) ? roadmapsData : []);
-      console.log('User roadmaps loaded:', roadmapsData.length);
-    } catch (error) {
-      console.error('❌ Error loading roadmaps from real-time service:', error);
+      console.log('✅ User roadmaps loaded from real-time service:', roadmapsData.length);
+    } catch (error: any) {
+      console.error('❌ Error loading roadmaps from real-time service:', error?.message || error);
       // Fallback to existing API service
       try {
         const fallbackData = await roadmapService.getUserRoadmaps(user.id);
-        setRoadmaps(Array.isArray(fallbackData) ? fallbackData : []);
-      } catch (fallbackError) {
-        console.error('❌ Fallback roadmap loading failed:', fallbackError);
+        const safeRoadmaps = Array.isArray(fallbackData) ? fallbackData : [];
+        setRoadmaps(safeRoadmaps);
+        console.log('✅ User roadmaps loaded from fallback API service:', safeRoadmaps.length);
+      } catch (fallbackError: any) {
+        console.error('❌ Fallback roadmap loading failed:', fallbackError?.message || fallbackError);
         setRoadmaps([]);
+        console.log('Using empty roadmaps array');
       }
     }
   }
