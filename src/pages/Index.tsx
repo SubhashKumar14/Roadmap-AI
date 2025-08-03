@@ -14,6 +14,7 @@ import { useAuth, AuthenticatedOnly, UnauthenticatedOnly } from "@/components/au
 import { AuthCard } from "@/components/auth/AuthComponents"
 import { authService, roadmapService, userService, progressService, updateProgressLocally } from "@/services/api"
 import socketService from "@/services/socket"
+import realtimeService from "@/services/realtime"
 
 const Index = () => {
   const { user, loading } = useAuth()
