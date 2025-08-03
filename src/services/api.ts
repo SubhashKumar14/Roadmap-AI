@@ -588,7 +588,12 @@ Make it comprehensive with 6-10 modules and 4-8 tasks per module. Include specif
   });
 
   if (!response.ok) {
-    const errorText = await response.text();
+    let errorText = 'Unknown error';
+    try {
+      errorText = await response.text();
+    } catch (err) {
+      console.warn('Could not read error response body');
+    }
     console.error('OpenAI API Error Details:', response.status, errorText);
     throw new Error(`OpenAI API error: ${response.status} - ${errorText}`);
   }
