@@ -530,6 +530,11 @@ function classifyTopic(topic: string) {
 }
 
 async function generateWithOpenAIDirect(topic: string) {
+  if (!OPENAI_API_KEY) {
+    console.warn('⚠️ OpenAI API key not configured');
+    throw new Error('OpenAI API key not configured');
+  }
+
   const prompt = `Create a comprehensive learning roadmap for: "${topic}" in TUF Striver's A2Z DSA sheet format.
 
 Please structure your response as a JSON object with this exact format:
