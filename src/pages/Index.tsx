@@ -323,17 +323,40 @@ const Index = () => {
     }
   }
 
-  const handleRoadmapGenerated = (newRoadmap: any) => {
-    setRoadmaps(prev => [newRoadmap, ...prev])
-    setShowGenerator(false)
-    setActiveTab("roadmaps")
-    toast({
-      title: "Roadmap Generated! 🎉",
-      description: `Your "${newRoadmap.title}" roadmap is ready to start.`,
-    })
+  const handleRoadmapGenerated = async (newRoadmap: any) => {
+    try {
+      // Save to real-time service first
+      await realtimeService.saveRoadmap(newRoadmap);
+      console.log('✅ Roadmap saved to real-time service');
 
-    // Emit socket event
-    socketService.emitRoadmapShared(newRoadmap)
+      // Update local state
+      setRoadmaps(prev => [newRoadmap, ...prev])
+      setShowGenerator(false)
+      setActiveTab("roadmaps")
+
+      toast({
+        title: "Roadmap Generated! 🎉",
+        description: `Your "${newRoadmap.title}" roadmap is ready to start.`,
+      })
+
+      // Emit socket event
+      socketService.emitRoadmapShared(newRoadmap)
+
+      // Refresh roadmaps to ensure sync
+      await loadUserRoadmaps();
+    } catch (error) {
+      console.error('❌ Error saving roadmap to real-time service:', error);
+
+      // Fallback to local state update only
+      setRoadmaps(prev => [newRoadmap, ...prev])
+      setShowGenerator(false)
+      setActiveTab("roadmaps")
+
+      toast({
+        title: "Roadmap Generated! 🎉",
+        description: `Your "${newRoadmap.title}" roadmap is ready. Note: Real-time sync unavailable.`,
+      })
+    }
   }
 
   const handleTaskComplete = async (roadmapId: string, moduleId: string, taskId: string) => {
