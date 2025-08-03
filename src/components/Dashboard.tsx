@@ -90,16 +90,16 @@ export function Dashboard({ userStats, roadmaps }: DashboardProps) {
             <span>Weekly Goal</span>
           </CardTitle>
           <CardDescription>
-            Complete {userStats.weeklyGoal} tasks this week
+            Complete {userStats.weeklyGoal || 5} tasks this week
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-2">
             <div className="flex justify-between text-sm">
-              <span>{userStats.weeklyProgress} / {userStats.weeklyGoal} tasks</span>
-              <span>{Math.round((userStats.weeklyProgress / userStats.weeklyGoal) * 100)}%</span>
+              <span>{userStats.weeklyProgress || 0} / {userStats.weeklyGoal || 5} tasks</span>
+              <span>{Math.round(((userStats.weeklyProgress || 0) / (userStats.weeklyGoal || 5)) * 100)}%</span>
             </div>
-            <Progress value={(userStats.weeklyProgress / userStats.weeklyGoal) * 100} />
+            <Progress value={((userStats.weeklyProgress || 0) / (userStats.weeklyGoal || 5)) * 100} />
           </div>
         </CardContent>
       </Card>
@@ -108,7 +108,7 @@ export function Dashboard({ userStats, roadmaps }: DashboardProps) {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card>
           <CardContent className="p-6 text-center">
-            <div className="text-2xl font-bold text-green-600">{userStats.totalCompleted}</div>
+            <div className="text-2xl font-bold text-green-600">{userStats.totalCompleted || 0}</div>
             <div className="text-sm text-muted-foreground">Tasks Completed</div>
           </CardContent>
         </Card>
@@ -120,7 +120,7 @@ export function Dashboard({ userStats, roadmaps }: DashboardProps) {
         </Card>
         <Card>
           <CardContent className="p-6 text-center">
-            <div className="text-2xl font-bold text-purple-600">{userStats.level}</div>
+            <div className="text-2xl font-bold text-purple-600">{userStats.level || 1}</div>
             <div className="text-sm text-muted-foreground">Current Level</div>
           </CardContent>
         </Card>
