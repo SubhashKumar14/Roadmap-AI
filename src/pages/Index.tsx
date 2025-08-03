@@ -123,23 +123,13 @@ const Index = () => {
         console.log('User profile loaded:', profileData);
       } catch (profileError) {
         console.error('❌ Error loading profile:', profileError);
-        // Use basic profile if loading fails
-        setUserProfile({
-          name: user!.user_metadata?.full_name || user!.email?.split('@')[0] || "User",
-          email: user!.email || "user@example.com",
-          bio: "",
-          location: "",
-          githubUsername: "",
-          twitterUsername: "",
-          joinDate: "January 2024",
-          rank: 999999,
-          learningGoals: [],
-          preferences: {
-            emailNotifications: true,
-            weeklyDigest: true,
-            achievementAlerts: true
-          }
-        });
+        // Use minimal profile data from auth if loading fails
+        setUserProfile(prev => ({
+          ...prev,
+          name: user!.user_metadata?.full_name || user!.email?.split('@')[0] || "",
+          email: user!.email || "",
+          joinDate: new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
+        }));
       }
 
       try {
@@ -383,7 +373,7 @@ const Index = () => {
           return newStats;
         });
 
-        console.log('📊 Task unchecked - stats decremented');
+        console.log('���� Task unchecked - stats decremented');
       }
 
       toast({
