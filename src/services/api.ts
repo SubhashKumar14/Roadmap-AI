@@ -1,6 +1,7 @@
 import axios from 'axios';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+export const API_BASE_URL = API_URL;
 
 // Check if we're in a cloud environment that can't reach localhost
 const isCloudEnvironment = window.location.hostname.includes('fly.dev') ||
@@ -176,7 +177,7 @@ async function handleCloudAPICall(config: any) {
   try {
     // Auth sync - create local user data
     if (url.includes('/auth/sync')) {
-      console.log('🔐 MATCHED: /auth/sync - Processing auth sync with data:', data);
+      console.log('�� MATCHED: /auth/sync - Processing auth sync with data:', data);
 
       const userData = {
         success: true,
