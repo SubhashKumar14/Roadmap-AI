@@ -340,22 +340,8 @@ const Index = () => {
 
   const connectSocket = () => {
     if (user?.id) {
-      socketService.connect(user.id)
-      
-      // Listen for real-time updates
-      socketService.onProgressUpdate((data) => {
-        toast({
-          title: "Progress Synced! 📱",
-          description: "Your progress has been updated across all devices.",
-        })
-      })
-
-      socketService.onAchievementEarned((achievement) => {
-        toast({
-          title: "Achievement Unlocked! 🏆",
-          description: `You earned "${achievement.title}"!`,
-        })
-      })
+      // WebSocket connection is handled by realtimeService
+      console.log('WebSocket connection managed by real-time service')
     }
   }
 
