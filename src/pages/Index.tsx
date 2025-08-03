@@ -160,23 +160,8 @@ const Index = () => {
       console.log('📧 User email:', user!.email);
       console.log('👤 User name:', user!.user_metadata?.full_name || user!.email?.split('@')[0]);
 
-      // Check database setup first
-      console.log('🔍 Checking database setup...');
-      const dbStatus = await checkDatabaseSetup();
-      setDatabaseStatus(dbStatus);
-
-      if (dbStatus.setupRequired) {
-        console.warn('⚠️ Database setup required:', dbStatus.error);
-        setShowDatabaseSetup(true);
-
-        toast({
-          title: "Database Setup Required",
-          description: "Some features require database setup. Click 'Setup Database' to get started.",
-          variant: "default"
-        });
-
-        // Continue with fallback data loading
-      }
+      console.log('🔍 Checking connection status...');
+      setConnectionStatus(realtimeService.getConnectionStatus());
 
       // Sync user with backend
       console.log('🔄 Syncing user with backend...');
