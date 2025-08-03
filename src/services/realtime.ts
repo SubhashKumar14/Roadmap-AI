@@ -47,7 +47,7 @@ class RealtimeService {
   // Initialize real-time subscriptions for a user
   initializeUserSubscriptions(userId: string) {
     if (!isSupabaseConfigured()) {
-      console.warn('⚠️ Supabase not configured, skipping real-time subscriptions')
+      console.warn('⚠��� Supabase not configured, skipping real-time subscriptions')
       return
     }
     this.userId = userId
@@ -124,6 +124,9 @@ class RealtimeService {
   // Update user progress in real-time
   async updateProgress(roadmapId: string, moduleId: string, taskId: string, completed: boolean) {
     if (!this.userId) return
+    if (!isSupabaseConfigured()) {
+      throw new Error('Supabase not configured')
+    }
 
     try {
       const { data, error } = await supabase
