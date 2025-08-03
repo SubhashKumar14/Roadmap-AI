@@ -376,17 +376,17 @@ function getStoredUser() {
 }
 
 function getInitialUserStats() {
-  // Only return actual user stats, no demo data
+  // Return clean empty stats - no demo data
   return {
     streak: 0,
     totalCompleted: 0,
     level: 1,
     experiencePoints: 0,
-    weeklyGoal: 10,
+    weeklyGoal: 5,
     weeklyProgress: 0,
     roadmapsCompleted: 0,
     totalStudyTime: 0,
-    globalRanking: 999999, // Start at bottom rank
+    globalRanking: null, // No ranking until earned
     attendedContests: 0,
     problemsSolved: { easy: 0, medium: 0, hard: 0, total: 0 }
   };
