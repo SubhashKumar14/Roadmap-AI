@@ -268,6 +268,9 @@ class RealtimeService {
 
   // Get user roadmaps from Supabase
   async getUserRoadmaps(userId: string) {
+    if (!isSupabaseConfigured()) {
+      throw new Error('Supabase not configured')
+    }
     try {
       const { data, error } = await supabase
         .from('roadmaps')
