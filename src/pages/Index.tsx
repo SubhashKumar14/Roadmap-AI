@@ -779,18 +779,7 @@ const Index = () => {
       <div className="min-h-screen bg-background">
         {!user ? (
           <AuthCard />
-        ) : showDatabaseSetup ? (
-          <div className="container mx-auto py-6">
-            <DatabaseSetupCard />
-            <div className="mt-8 text-center">
-              <Button
-                variant="outline"
-                onClick={() => setShowDatabaseSetup(false)}
-              >
-                Continue with Limited Features
-              </Button>
-            </div>
-          </div>
+
         ) : (
           <>
             <Header
