@@ -375,8 +375,7 @@ const Index = () => {
         description: `Your "${newRoadmap.title}" roadmap is ready to start.`,
       })
 
-      // Emit socket event
-      socketService.emitRoadmapShared(newRoadmap)
+      // Real-time sync handled by realtimeService
 
       // Refresh roadmaps to ensure sync
       await loadUserRoadmaps();
