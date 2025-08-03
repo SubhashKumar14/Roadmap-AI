@@ -200,8 +200,9 @@ class RealtimeService {
       }
 
       return data || []
-    } catch (error) {
-      console.error('Failed to fetch user progress:', error)
+    } catch (error: any) {
+      const errorMessage = error?.message || 'Unknown error fetching user progress'
+      console.error('Failed to fetch user progress:', errorMessage)
       return []
     }
   }
