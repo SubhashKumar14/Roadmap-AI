@@ -287,7 +287,7 @@ const Index = () => {
         const errorMsg = profileError?.message || profileError;
         console.error('❌ Error loading profile from real-time service:', errorMsg);
 
-        if (isTableMissingError(profileError)) {
+        if (isTableMissingError(profileError) || errorMsg.includes('Database tables not set up')) {
           console.warn('📋 Database tables not set up, using fallback profile');
           setShowDatabaseSetup(true);
           // Use auth data directly
