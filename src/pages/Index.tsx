@@ -82,14 +82,18 @@ const Index = () => {
       connectSocket()
 
       // Initialize real-time subscriptions with error handling
-      try {
-        realtimeService.initializeUserSubscriptions(user.id)
-        setConnectionStatus(realtimeService.getConnectionStatus())
-        console.log('✅ Real-time subscriptions initialized')
-      } catch (error) {
-        console.warn('⚠️ Could not initialize real-time subscriptions:', error)
-        setConnectionStatus('error')
+      const initializeRealtime = async () => {
+        try {
+          await realtimeService.initializeUserSubscriptions(user.id)
+          setConnectionStatus(realtimeService.getConnectionStatus())
+          console.log('✅ Real-time subscriptions initialized')
+        } catch (error) {
+          console.warn('⚠️ Could not initialize real-time subscriptions:', error)
+          setConnectionStatus('error')
+        }
       }
+
+      initializeRealtime()
 
       // Listen for real-time updates
       const handleProgressUpdate = (event: CustomEvent) => {
