@@ -221,14 +221,14 @@ async function handleCloudAPICall(config: any) {
       const profile = JSON.parse(localStorage.getItem('ai-roadmap-profile') || '{}');
 
       const response = {
-        name: storedUser?.name || 'User',
-        email: storedUser?.email || 'user@example.com',
+        name: storedUser?.name || '',
+        email: storedUser?.email || '',
         bio: profile.bio || '',
         location: profile.location || '',
         githubUsername: profile.githubUsername || '',
         twitterUsername: profile.twitterUsername || '',
         joinDate: profile.joinDate || new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' }),
-        rank: 50000,
+        rank: null,
         learningGoals: profile.learningGoals || [],
         preferences: profile.preferences || {
           emailNotifications: true,
