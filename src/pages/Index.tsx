@@ -26,6 +26,8 @@ const Index = () => {
   const [selectedRoadmap, setSelectedRoadmap] = useState<string | null>(null)
   const [showGenerator, setShowGenerator] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
+  const [databaseStatus, setDatabaseStatus] = useState<DatabaseStatus | null>(null)
+  const [showDatabaseSetup, setShowDatabaseSetup] = useState(false)
 
   // User data state - starts empty, populated from backend only
   const [userStats, setUserStats] = useState({
