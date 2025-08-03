@@ -133,9 +133,10 @@ class RealtimeService {
       }
 
       return data
-    } catch (error) {
-      console.error('Failed to update progress:', error)
-      throw error
+    } catch (error: any) {
+      const errorMessage = error?.message || 'Unknown error updating progress'
+      console.error('Failed to update progress:', errorMessage)
+      throw new Error(errorMessage)
     }
   }
 
