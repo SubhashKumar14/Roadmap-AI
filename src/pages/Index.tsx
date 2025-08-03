@@ -159,15 +159,15 @@ const Index = () => {
             streak: statsData.streak || 0,
             totalCompleted: statsData.total_completed || 0,
             level: statsData.level || 1,
-            experiencePoints: statsData.experience_points || 0,
-            activeLearningDays: statsData.active_learning_days || [],
-            weeklyGoal: statsData.weekly_goal || 5,
-            weeklyProgress: statsData.weekly_progress || 0,
-            roadmapsCompleted: statsData.roadmaps_completed || 0,
-            totalStudyTime: statsData.total_study_time || 0,
-            problemsSolved: statsData.problems_solved || { easy: 0, medium: 0, hard: 0, total: 0 },
-            globalRanking: statsData.global_ranking || null,
-            attendedContests: statsData.attended_contests || 0
+            experiencePoints: statsData.experiencePoints || 0,
+            activeLearningDays: [],
+            weeklyGoal: statsData.weeklyGoal || 5,
+            weeklyProgress: statsData.weeklyProgress || 0,
+            roadmapsCompleted: statsData.roadmapsCompleted || 0,
+            totalStudyTime: statsData.totalStudyTime || 0,
+            problemsSolved: statsData.problemsSolved || { easy: 0, medium: 0, hard: 0, total: 0 },
+            globalRanking: statsData.globalRanking || null,
+            attendedContests: statsData.attendedContests || 0
           });
           console.log('User stats loaded from real-time service:', statsData);
         } else {
