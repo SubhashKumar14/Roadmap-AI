@@ -128,8 +128,8 @@ class RealtimeService {
         })
 
       if (error) {
-        console.error('Error updating progress:', error)
-        throw error
+        console.error('Error updating progress:', error.message || error)
+        throw new Error(`Failed to update progress: ${error.message || 'Unknown error'}`)
       }
 
       return data
