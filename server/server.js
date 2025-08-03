@@ -140,11 +140,16 @@ app.use((req, res, next) => {
 
 // Socket.IO connection handling
 io.on('connection', (socket) => {
-  console.log('User connected:', socket.id);
-  
+  console.log('✅ WebSocket user connected:', socket.id);
+  console.log('🔍 Connection details:', {
+    transport: socket.conn.transport.name,
+    upgraded: socket.conn.upgraded,
+    readyState: socket.conn.readyState
+  });
+
   socket.on('join-room', (userId) => {
     socket.join(userId);
-    console.log(`User ${userId} joined room`);
+    console.log(`👤 User ${userId} joined room`);
   });
 
   socket.on('progress-update', (data) => {
