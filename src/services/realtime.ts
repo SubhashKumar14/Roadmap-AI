@@ -291,8 +291,14 @@ class RealtimeService {
         .order('created_at', { ascending: false })
 
       if (error) {
-        console.error('Error fetching roadmaps:', error.message || error)
-        throw new Error(`Failed to fetch roadmaps: ${error.message || 'Unknown error'}`)
+        const errorMsg = error.message || error
+        console.error('Error fetching roadmaps:', errorMsg)
+
+        if (isTableMissingError(error)) {
+          throw new Error('Database tables not set up. Please run the SQL schema in Supabase.')
+        }
+
+        throw new Error(`Failed to fetch roadmaps: ${errorMsg}`)
       }
 
       return data || []
