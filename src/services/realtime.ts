@@ -305,8 +305,9 @@ class RealtimeService {
       }
 
       return data || []
-    } catch (error) {
-      console.error('Failed to fetch roadmaps:', error)
+    } catch (error: any) {
+      const errorMessage = error?.message || 'Unknown error fetching roadmaps'
+      console.error('Failed to fetch roadmaps:', errorMessage)
       return []
     }
   }
