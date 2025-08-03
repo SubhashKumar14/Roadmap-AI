@@ -274,8 +274,14 @@ const Index = () => {
             joinDate: new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
           }));
 
-          // Sync profile to real-time service
-          await realtimeService.syncUserProfile(user!.id, initialProfile);
+          // Sync profile to real-time service (only if database is set up)
+          if (databaseStatus?.tablesExist) {
+            try {
+              await realtimeService.syncUserProfile(user!.id, initialProfile);
+            } catch (syncError: any) {
+              console.warn('Could not sync initial profile:', syncError?.message || syncError);
+            }
+          }
         }
       } catch (profileError: any) {
         const errorMsg = profileError?.message || profileError;
