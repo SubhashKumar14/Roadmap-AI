@@ -152,6 +152,17 @@ const Index = () => {
       console.log('📧 User email:', user!.email);
       console.log('👤 User name:', user!.user_metadata?.full_name || user!.email?.split('@')[0]);
 
+      // Check database setup first
+      console.log('🔍 Checking database setup...');
+      const dbStatus = await checkDatabaseSetup();
+      setDatabaseStatus(dbStatus);
+
+      if (dbStatus.setupRequired) {
+        console.warn('⚠��� Database setup required:', dbStatus.error);
+        setShowDatabaseSetup(true);
+        // Continue with fallback data loading
+      }
+
       // Sync user with backend
       console.log('🔄 Syncing user with backend...');
       const syncResult = await authService.syncUser(
