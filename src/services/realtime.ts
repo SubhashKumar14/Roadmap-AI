@@ -159,9 +159,10 @@ class RealtimeService {
       }
 
       return data
-    } catch (error) {
-      console.error('Failed to update stats:', error)
-      throw error
+    } catch (error: any) {
+      const errorMessage = error?.message || 'Unknown error updating stats'
+      console.error('Failed to update stats:', errorMessage)
+      throw new Error(errorMessage)
     }
   }
 
