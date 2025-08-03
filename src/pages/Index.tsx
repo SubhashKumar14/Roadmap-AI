@@ -636,7 +636,7 @@ const Index = () => {
         // Try real-time service first
         try {
           await realtimeService.syncUserProfile(user.id, updatedProfile);
-          console.log('✅ Profile updated in real-time service');
+          console.log('�� Profile updated in real-time service');
         } catch (realtimeError: any) {
           console.log('🌐 Real-time service unavailable:', realtimeError?.message || realtimeError);
           await userService.updateProfile(user.id, updatedProfile);
@@ -782,6 +782,18 @@ const Index = () => {
       <div className="min-h-screen bg-background">
         {!user ? (
           <AuthCard />
+        ) : showDatabaseSetup ? (
+          <div className="container mx-auto py-6">
+            <DatabaseSetupCard />
+            <div className="mt-8 text-center">
+              <Button
+                variant="outline"
+                onClick={() => setShowDatabaseSetup(false)}
+              >
+                Continue with Limited Features
+              </Button>
+            </div>
+          </div>
         ) : (
           <>
             <Header
