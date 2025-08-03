@@ -98,7 +98,13 @@ class WebSocketService {
     })
 
     this.socket.on('connect_error', (error) => {
-      console.error('🚫 WebSocket connection error:', error.message)
+      console.error('🚫 WebSocket connection error:', error.message || error)
+      console.error('🔍 Error details:', {
+        description: error.description,
+        context: error.context,
+        type: error.type,
+        transport: error.transport
+      })
       this.isConnected = false
       this.handleReconnection()
     })
