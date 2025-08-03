@@ -80,8 +80,13 @@ const Index = () => {
       initializeUserData()
       connectSocket()
 
-      // Initialize real-time subscriptions
-      realtimeService.initializeUserSubscriptions(user.id)
+      // Initialize real-time subscriptions with error handling
+      try {
+        realtimeService.initializeUserSubscriptions(user.id)
+        console.log('✅ Real-time subscriptions initialized')
+      } catch (error) {
+        console.warn('⚠️ Could not initialize real-time subscriptions:', error)
+      }
 
       // Listen for real-time updates
       const handleProgressUpdate = (event: CustomEvent) => {
