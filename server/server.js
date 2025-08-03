@@ -17,9 +17,11 @@ const io = socketIo(server, {
       "http://localhost:5173",
       "http://localhost:3000"
     ],
-    credentials: true,
+    credentials: false,
     methods: ['GET', 'POST']
-  }
+  },
+  allowEIO3: true,
+  transports: ['polling', 'websocket']
 });
 
 // Middleware
