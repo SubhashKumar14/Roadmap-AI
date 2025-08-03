@@ -45,7 +45,13 @@ class WebSocketService {
     }
 
     this.userId = userId
-    this.connect()
+
+    try {
+      this.connect()
+    } catch (error) {
+      console.error('🚫 Failed to initialize WebSocket connection:', error)
+      console.log('📱 Continuing without real-time features...')
+    }
   }
 
   private connect() {
