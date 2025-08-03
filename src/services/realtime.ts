@@ -354,9 +354,10 @@ class RealtimeService {
       }
 
       return data
-    } catch (error) {
-      console.error('Failed to sync profile:', error)
-      throw error
+    } catch (error: any) {
+      const errorMessage = error?.message || 'Unknown error syncing profile'
+      console.error('Failed to sync profile:', errorMessage)
+      throw new Error(errorMessage)
     }
   }
 
