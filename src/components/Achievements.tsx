@@ -166,11 +166,11 @@ export function Achievements({ userStats }: AchievementsProps) {
       icon: Clock,
       category: "Dedication",
       requirement: 100,
-      current: Math.min(userStats.totalStudyTime, 100),
+      current: Math.min(userStats.totalStudyTime || 0, 100),
       type: "time",
       difficulty: "hard",
       points: 400,
-      earned: userStats.totalStudyTime >= 100
+      earned: (userStats.totalStudyTime || 0) >= 100
     }
   ]
 
