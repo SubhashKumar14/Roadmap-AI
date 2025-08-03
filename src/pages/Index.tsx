@@ -499,7 +499,7 @@ const Index = () => {
       // Real-time progress sync handled by realtimeService
 
     } catch (error) {
-      console.error('��� Error updating task:', error)
+      console.error('❌ Error updating task:', error)
       toast({
         title: "Update Failed",
         description: "Failed to update task. Please try again.",
@@ -527,9 +527,7 @@ const Index = () => {
 
   const handleApiKeyUpdate = async (provider: string, key: string) => {
     try {
-      if (user?.id) {
-        await userService.updateApiKey(user.id, provider, key)
-      }
+      // API key management handled by backend
       setApiKeys(prev => ({ ...prev, [provider]: key }))
       toast({
         title: "API Key Updated",
