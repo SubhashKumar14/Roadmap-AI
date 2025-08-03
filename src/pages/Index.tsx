@@ -84,9 +84,11 @@ const Index = () => {
       // Initialize real-time subscriptions with error handling
       try {
         realtimeService.initializeUserSubscriptions(user.id)
+        setConnectionStatus(realtimeService.getConnectionStatus())
         console.log('✅ Real-time subscriptions initialized')
       } catch (error) {
         console.warn('⚠️ Could not initialize real-time subscriptions:', error)
+        setConnectionStatus('error')
       }
 
       // Listen for real-time updates
