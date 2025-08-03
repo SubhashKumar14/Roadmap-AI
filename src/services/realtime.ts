@@ -173,8 +173,8 @@ class RealtimeService {
         .eq('user_id', userId)
 
       if (error) {
-        console.error('Error fetching user progress:', error)
-        throw error
+        console.error('Error fetching user progress:', error.message || error)
+        throw new Error(`Failed to fetch user progress: ${error.message || 'Unknown error'}`)
       }
 
       return data || []
