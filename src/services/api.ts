@@ -662,6 +662,11 @@ Please structure your response as a JSON object with the same format as shown ea
 }
 
 async function generateWithPerplexityDirect(topic: string) {
+  if (!PERPLEXITY_API_KEY) {
+    console.warn('⚠️ Perplexity API key not configured');
+    throw new Error('Perplexity API key not configured');
+  }
+
   const prompt = `Create a comprehensive learning roadmap for: "${topic}" with current trends and up-to-date resources in TUF Striver's format.
 
 Focus on the latest tools, current industry practices, and recent developments. Include 6-8 modules with current trends and research.`;
@@ -966,7 +971,7 @@ export const userService = {
     return await apiCallWithFallback(
       () => api.put(`/user/api-keys/${supabaseId}`, { provider, apiKey }),
       async () => {
-        console.log('🔑 Direct fallback: update API key');
+        console.log('�� Direct fallback: update API key');
         return { data: { success: true } };
       }
     );
