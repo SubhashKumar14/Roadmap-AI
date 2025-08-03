@@ -185,6 +185,9 @@ class RealtimeService {
 
   // Get user progress from Supabase
   async getUserProgress(userId: string) {
+    if (!isSupabaseConfigured()) {
+      throw new Error('Supabase not configured')
+    }
     try {
       const { data, error } = await supabase
         .from('user_progress')
