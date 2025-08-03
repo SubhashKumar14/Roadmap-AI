@@ -75,11 +75,11 @@ export function Achievements({ userStats }: AchievementsProps) {
       icon: Calendar,
       category: "Consistency",
       requirement: 30,
-      current: Math.min(userStats.streak, 30),
+      current: Math.min(userStats.streak || 0, 30),
       type: "streak",
       difficulty: "hard",
       points: 300,
-      earned: userStats.streak >= 30
+      earned: (userStats.streak || 0) >= 30
     },
     {
       id: 6,
@@ -88,11 +88,11 @@ export function Achievements({ userStats }: AchievementsProps) {
       icon: Award,
       category: "Consistency",
       requirement: 100,
-      current: Math.min(userStats.streak, 100),
+      current: Math.min(userStats.streak || 0, 100),
       type: "streak",
       difficulty: "legendary",
       points: 1000,
-      earned: userStats.streak >= 100
+      earned: (userStats.streak || 0) >= 100
     },
     {
       id: 7,
@@ -101,11 +101,11 @@ export function Achievements({ userStats }: AchievementsProps) {
       icon: BookOpen,
       category: "Milestones",
       requirement: 1,
-      current: Math.min(userStats.roadmapsCompleted, 1),
+      current: Math.min(userStats.roadmapsCompleted || 0, 1),
       type: "roadmaps",
       difficulty: "medium",
       points: 100,
-      earned: userStats.roadmapsCompleted >= 1
+      earned: (userStats.roadmapsCompleted || 0) >= 1
     },
     {
       id: 8,
