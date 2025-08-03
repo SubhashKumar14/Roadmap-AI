@@ -345,6 +345,14 @@ class QdrantDatabaseService {
   }
 
   async getFromQdrant(collection, id) {
+    // Immediate fallback if Qdrant is not available
+    if (!this.qdrantAvailable) {
+      console.log('📋 Using localStorage fallback for getting:', collection, id)
+      const items = JSON.parse(localStorage.getItem(`qdrant-${collection}`) || '[]')
+      const item = items.find(item => item.id === id)
+      return item ? item.data : null
+    }
+
     try {
       const response = await fetch(`${this.qdrantUrl}/collections/${collection}/points/${id}`, {
         headers: this.getHeaders()
