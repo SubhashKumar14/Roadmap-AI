@@ -312,8 +312,8 @@ class RealtimeService {
         .single()
 
       if (error && error.code !== 'PGRST116') {
-        console.error('Error fetching profile:', error)
-        throw error
+        console.error('Error fetching profile:', error.message || error)
+        throw new Error(`Failed to fetch profile: ${error.message || 'Unknown error'}`)
       }
 
       return data || null
