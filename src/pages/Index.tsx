@@ -52,8 +52,8 @@ const Index = () => {
     location: "",
     githubUsername: "",
     twitterUsername: "",
-    joinDate: "January 2024",
-    rank: 999999,
+    joinDate: "",
+    rank: null,
     learningGoals: [],
     preferences: {
       emailNotifications: true,
