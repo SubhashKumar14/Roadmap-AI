@@ -38,7 +38,7 @@ export function Dashboard({ userStats, roadmaps }: DashboardProps) {
             <div className="flex items-center space-x-2">
               <Flame className="h-5 w-5 text-accent" />
               <div className="space-y-1">
-                <p className="text-2xl font-bold">{userStats.streak}</p>
+                <p className="text-2xl font-bold">{userStats.streak || 0}</p>
                 <p className="text-xs text-muted-foreground">Day Streak</p>
               </div>
             </div>
