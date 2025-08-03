@@ -487,6 +487,11 @@ class DatabaseService {
   }
 
   async getUserRoadmaps(userId: string): Promise<Roadmap[]> {
+    // Use fallback in cloud environment
+    if (this.isCloudEnvironment) {
+      return this.getUserRoadmapsFallback(userId)
+    }
+
     try {
       const response = await fetch(`${this.baseUrl}/roadmap/user/${userId}`, {
         credentials: 'include',
@@ -494,16 +499,23 @@ class DatabaseService {
 
       if (!response.ok) {
         console.error('Failed to fetch user roadmaps')
-        return []
+        return this.getUserRoadmapsFallback(userId)
       }
 
       const data = await response.json()
       return data.roadmaps || []
     } catch (error: any) {
-      const errorMessage = error?.message || 'Unknown error fetching roadmaps'
-      console.error('Failed to fetch roadmaps:', errorMessage)
-      return []
+      console.warn('API not available, using fallback:', error?.message)
+      return this.getUserRoadmapsFallback(userId)
     }
+  }
+
+  private getUserRoadmapsFallback(userId: string): Promise<Roadmap[]> {
+    return new Promise((resolve) => {
+      const roadmaps = JSON.parse(localStorage.getItem('ai-roadmap-roadmaps') || '[]')
+      const userRoadmaps = roadmaps.filter((r: any) => r.user_id === userId)
+      resolve(userRoadmaps)
+    })
   }
 }
 
