@@ -153,8 +153,8 @@ class RealtimeService {
         })
 
       if (error) {
-        console.error('Error updating stats:', error)
-        throw error
+        console.error('Error updating stats:', error.message || error)
+        throw new Error(`Failed to update stats: ${error.message || 'Unknown error'}`)
       }
 
       return data
