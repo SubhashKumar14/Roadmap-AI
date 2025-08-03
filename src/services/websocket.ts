@@ -148,12 +148,15 @@ class WebSocketService {
       console.log(`⏳ WebSocket reconnecting in ${delay}ms (attempt ${this.reconnectAttempts}/${this.maxReconnectAttempts})`)
 
       setTimeout(() => {
-        console.log('���� Attempting WebSocket reconnection...')
+        console.log('🔄 Attempting WebSocket reconnection...')
         this.connect()
       }, delay)
     } else {
-      console.error('🔴 Max WebSocket reconnection attempts reached. Continuing without real-time features.')
-      window.dispatchEvent(new CustomEvent('websocket-connection-failed'))
+      console.warn('⚠️ Max WebSocket reconnection attempts reached. Continuing without real-time features.')
+      console.log('📱 Application will continue to work with local storage and API fallbacks.')
+      window.dispatchEvent(new CustomEvent('websocket-connection-failed', {
+        detail: { message: 'Real-time features unavailable, using local mode' }
+      }))
     }
   }
 
