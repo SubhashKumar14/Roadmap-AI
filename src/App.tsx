@@ -3,7 +3,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { SupabaseAuthProvider } from "@/components/auth/SupabaseAuthProvider";
+import { DatabaseAuthProvider } from "@/components/auth/DatabaseAuthProvider";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
@@ -13,7 +13,7 @@ const queryClient = new QueryClient();
 const App = () => {
   return (
     <ErrorBoundary>
-      <SupabaseAuthProvider>
+      <DatabaseAuthProvider>
         <QueryClientProvider client={queryClient}>
           <TooltipProvider>
             <Toaster />
@@ -26,7 +26,7 @@ const App = () => {
             </BrowserRouter>
           </TooltipProvider>
         </QueryClientProvider>
-      </SupabaseAuthProvider>
+      </DatabaseAuthProvider>
     </ErrorBoundary>
   );
 };

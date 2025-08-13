@@ -22,7 +22,8 @@ import {
   BookOpen,
   Zap
 } from "lucide-react"
-import { useAuth } from "@/components/auth/SupabaseAuthProvider"
+import { useAuth } from "@/components/auth/DatabaseAuthProvider"
+import { ConnectionStatus } from "@/components/ConnectionStatus"
 
 interface HeaderProps {
   activeTab: string
@@ -87,6 +88,7 @@ export function Header({ activeTab, onTabChange, userStats }: HeaderProps) {
 
         {/* User Section */}
         <div className="flex items-center space-x-4">
+          <ConnectionStatus />
           <ModeToggle />
           
           {!user && (

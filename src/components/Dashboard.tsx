@@ -23,9 +23,9 @@ export function Dashboard({ userStats, roadmaps }: DashboardProps) {
   const completedRoadmaps = safeRoadmaps.filter(r => r.progress === 100)
 
   const achievements = [
-    { id: 1, title: "First Steps", description: "Complete your first task", icon: Star, earned: userStats.totalCompleted >= 1 },
-    { id: 2, title: "Week Warrior", description: "7-day learning streak", icon: Flame, earned: userStats.streak >= 7 },
-    { id: 3, title: "Module Master", description: "Complete 5 modules", icon: Target, earned: userStats.totalCompleted >= 5 },
+    { id: 1, title: "First Steps", description: "Complete your first task", icon: Star, earned: (userStats.totalCompleted || 0) >= 1 },
+    { id: 2, title: "Week Warrior", description: "7-day learning streak", icon: Flame, earned: (userStats.streak || 0) >= 7 },
+    { id: 3, title: "Module Master", description: "Complete 5 modules", icon: Target, earned: (userStats.totalCompleted || 0) >= 5 },
     { id: 4, title: "Road Runner", description: "Complete a full roadmap", icon: Trophy, earned: completedRoadmaps.length > 0 },
   ]
 
@@ -38,7 +38,7 @@ export function Dashboard({ userStats, roadmaps }: DashboardProps) {
             <div className="flex items-center space-x-2">
               <Flame className="h-5 w-5 text-accent" />
               <div className="space-y-1">
-                <p className="text-2xl font-bold">{userStats.streak}</p>
+                <p className="text-2xl font-bold">{userStats.streak || 0}</p>
                 <p className="text-xs text-muted-foreground">Day Streak</p>
               </div>
             </div>
@@ -50,7 +50,7 @@ export function Dashboard({ userStats, roadmaps }: DashboardProps) {
             <div className="flex items-center space-x-2">
               <CheckCircle className="h-5 w-5 text-success" />
               <div className="space-y-1">
-                <p className="text-2xl font-bold">{userStats.totalCompleted}</p>
+                <p className="text-2xl font-bold">{userStats.totalCompleted || 0}</p>
                 <p className="text-xs text-muted-foreground">Tasks Completed</p>
               </div>
             </div>
@@ -62,7 +62,7 @@ export function Dashboard({ userStats, roadmaps }: DashboardProps) {
             <div className="flex items-center space-x-2">
               <TrendingUp className="h-5 w-5 text-primary" />
               <div className="space-y-1">
-                <p className="text-2xl font-bold">{userStats.level}</p>
+                <p className="text-2xl font-bold">{userStats.level || 1}</p>
                 <p className="text-xs text-muted-foreground">Level</p>
               </div>
             </div>
@@ -90,16 +90,16 @@ export function Dashboard({ userStats, roadmaps }: DashboardProps) {
             <span>Weekly Goal</span>
           </CardTitle>
           <CardDescription>
-            Complete {userStats.weeklyGoal} tasks this week
+            Complete {userStats.weeklyGoal || 5} tasks this week
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-2">
             <div className="flex justify-between text-sm">
-              <span>{userStats.weeklyProgress} / {userStats.weeklyGoal} tasks</span>
-              <span>{Math.round((userStats.weeklyProgress / userStats.weeklyGoal) * 100)}%</span>
+              <span>{userStats.weeklyProgress || 0} / {userStats.weeklyGoal || 5} tasks</span>
+              <span>{Math.round(((userStats.weeklyProgress || 0) / (userStats.weeklyGoal || 5)) * 100)}%</span>
             </div>
-            <Progress value={(userStats.weeklyProgress / userStats.weeklyGoal) * 100} />
+            <Progress value={((userStats.weeklyProgress || 0) / (userStats.weeklyGoal || 5)) * 100} />
           </div>
         </CardContent>
       </Card>
@@ -108,7 +108,7 @@ export function Dashboard({ userStats, roadmaps }: DashboardProps) {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card>
           <CardContent className="p-6 text-center">
-            <div className="text-2xl font-bold text-green-600">{userStats.totalCompleted}</div>
+            <div className="text-2xl font-bold text-green-600">{userStats.totalCompleted || 0}</div>
             <div className="text-sm text-muted-foreground">Tasks Completed</div>
           </CardContent>
         </Card>
@@ -120,7 +120,7 @@ export function Dashboard({ userStats, roadmaps }: DashboardProps) {
         </Card>
         <Card>
           <CardContent className="p-6 text-center">
-            <div className="text-2xl font-bold text-purple-600">{userStats.level}</div>
+            <div className="text-2xl font-bold text-purple-600">{userStats.level || 1}</div>
             <div className="text-sm text-muted-foreground">Current Level</div>
           </CardContent>
         </Card>

@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { useAuth } from './SupabaseAuthProvider'
+import { useAuth } from './DatabaseAuthProvider'
 import { useToast } from '@/hooks/use-toast'
 import { Eye, EyeOff, Chrome, Github, Zap } from 'lucide-react'
 
@@ -18,7 +18,7 @@ export function AuthCard() {
   const { signIn, signUp, signInWithProvider } = useAuth()
   const { toast } = useToast()
 
-  const handleEmailAuth = async (isSignUp: boolean) => {
+  const handleEmailAuth = async (isSignUp) => {
     if (!email || !password) {
       toast({
         title: "Missing information",
@@ -33,10 +33,15 @@ export function AuthCard() {
     try {
       let result
       if (isSignUp) {
-        result = await signUp(email, password, { 
-          full_name: name,
-          email: email 
-        })
+        if (!name) {
+          toast({
+            title: "Missing information",
+            description: "Please provide your full name.",
+            variant: "destructive"
+          })
+          return
+        }
+        result = await signUp(email, password, name)
       } else {
         result = await signIn(email, password)
       }
@@ -44,16 +49,16 @@ export function AuthCard() {
       if (result.error) {
         toast({
           title: "Authentication failed",
-          description: result.error.message,
+          description: result.error,
           variant: "destructive"
         })
       } else {
         toast({
           title: isSignUp ? "Account created!" : "Welcome back!",
-          description: isSignUp ? "Please check your email to verify your account." : "You've been signed in successfully."
+          description: isSignUp ? "Your account has been created successfully." : "You've been signed in successfully."
         })
       }
-    } catch (error: any) {
+    } catch (error) {
       toast({
         title: "An error occurred",
         description: error.message || "Something went wrong. Please try again.",
@@ -64,19 +69,17 @@ export function AuthCard() {
     }
   }
 
-  const handleProviderAuth = async (provider: 'google' | 'github' | 'discord') => {
+  const handleProviderAuth = async (provider) => {
     setIsLoading(true)
-    
+
     try {
-      const { error } = await signInWithProvider(provider)
-      if (error) {
-        toast({
-          title: "Authentication failed",
-          description: error.message,
-          variant: "destructive"
-        })
-      }
-    } catch (error: any) {
+      // OAuth providers not supported with MongoDB backend yet
+      toast({
+        title: "OAuth not available",
+        description: "Please use email and password authentication for now.",
+        variant: "destructive"
+      })
+    } catch (error) {
       toast({
         title: "An error occurred",
         description: error.message || "Something went wrong. Please try again.",
@@ -238,7 +241,7 @@ export function AuthCard() {
                 <Button
                   variant="outline"
                   onClick={() => handleProviderAuth('google')}
-                  disabled={isLoading}
+                  disabled={true}
                 >
                   <Chrome className="h-4 w-4 mr-2" />
                   Google
@@ -246,7 +249,7 @@ export function AuthCard() {
                 <Button
                   variant="outline"
                   onClick={() => handleProviderAuth('github')}
-                  disabled={isLoading}
+                  disabled={true}
                 >
                   <Github className="h-4 w-4 mr-2" />
                   GitHub
@@ -276,7 +279,7 @@ export function SignOutButton() {
       if (error) {
         toast({
           title: "Error signing out",
-          description: error.message,
+          description: error,
           variant: "destructive"
         })
       } else {
@@ -285,7 +288,7 @@ export function SignOutButton() {
           description: "You have been signed out of your account."
         })
       }
-    } catch (error: any) {
+    } catch (error) {
       toast({
         title: "An error occurred",
         description: error.message || "Failed to sign out.",

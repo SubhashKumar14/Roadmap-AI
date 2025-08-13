@@ -31,7 +31,7 @@ import {
   Edit
 } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
-import { useAuth } from "@/components/auth/SupabaseAuthProvider"
+import { useAuth } from "@/components/auth/DatabaseAuthProvider"
 import { userService, progressService } from "@/services/api"
 import { ContributionCalendar } from "@/components/ContributionCalendar"
 

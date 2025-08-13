@@ -23,11 +23,11 @@ export function Achievements({ userStats }: AchievementsProps) {
       icon: Star,
       category: "Getting Started",
       requirement: 1,
-      current: Math.min(userStats.totalCompleted, 1),
+      current: Math.min(userStats.totalCompleted || 0, 1),
       type: "tasks",
       difficulty: "easy",
       points: 10,
-      earned: userStats.totalCompleted >= 1
+      earned: (userStats.totalCompleted || 0) >= 1
     },
     {
       id: 2,
@@ -36,11 +36,11 @@ export function Achievements({ userStats }: AchievementsProps) {
       icon: CheckCircle,
       category: "Progress",
       requirement: 10,
-      current: Math.min(userStats.totalCompleted, 10),
+      current: Math.min(userStats.totalCompleted || 0, 10),
       type: "tasks",
       difficulty: "medium",
       points: 50,
-      earned: userStats.totalCompleted >= 10
+      earned: (userStats.totalCompleted || 0) >= 10
     },
     {
       id: 3,
@@ -49,11 +49,11 @@ export function Achievements({ userStats }: AchievementsProps) {
       icon: Target,
       category: "Progress", 
       requirement: 100,
-      current: Math.min(userStats.totalCompleted, 100),
+      current: Math.min(userStats.totalCompleted || 0, 100),
       type: "tasks",
       difficulty: "hard",
       points: 500,
-      earned: userStats.totalCompleted >= 100
+      earned: (userStats.totalCompleted || 0) >= 100
     },
     {
       id: 4,
@@ -62,11 +62,11 @@ export function Achievements({ userStats }: AchievementsProps) {
       icon: Flame,
       category: "Consistency",
       requirement: 7,
-      current: Math.min(userStats.streak, 7),
+      current: Math.min(userStats.streak || 0, 7),
       type: "streak",
       difficulty: "medium",
       points: 75,
-      earned: userStats.streak >= 7
+      earned: (userStats.streak || 0) >= 7
     },
     {
       id: 5,
@@ -75,11 +75,11 @@ export function Achievements({ userStats }: AchievementsProps) {
       icon: Calendar,
       category: "Consistency",
       requirement: 30,
-      current: Math.min(userStats.streak, 30),
+      current: Math.min(userStats.streak || 0, 30),
       type: "streak",
       difficulty: "hard",
       points: 300,
-      earned: userStats.streak >= 30
+      earned: (userStats.streak || 0) >= 30
     },
     {
       id: 6,
@@ -88,11 +88,11 @@ export function Achievements({ userStats }: AchievementsProps) {
       icon: Award,
       category: "Consistency",
       requirement: 100,
-      current: Math.min(userStats.streak, 100),
+      current: Math.min(userStats.streak || 0, 100),
       type: "streak",
       difficulty: "legendary",
       points: 1000,
-      earned: userStats.streak >= 100
+      earned: (userStats.streak || 0) >= 100
     },
     {
       id: 7,
@@ -101,11 +101,11 @@ export function Achievements({ userStats }: AchievementsProps) {
       icon: BookOpen,
       category: "Milestones",
       requirement: 1,
-      current: Math.min(userStats.roadmapsCompleted, 1),
+      current: Math.min(userStats.roadmapsCompleted || 0, 1),
       type: "roadmaps",
       difficulty: "medium",
       points: 100,
-      earned: userStats.roadmapsCompleted >= 1
+      earned: (userStats.roadmapsCompleted || 0) >= 1
     },
     {
       id: 8,
@@ -114,11 +114,11 @@ export function Achievements({ userStats }: AchievementsProps) {
       icon: Trophy,
       category: "Milestones",
       requirement: 5,
-      current: Math.min(userStats.roadmapsCompleted, 5),
+      current: Math.min(userStats.roadmapsCompleted || 0, 5),
       type: "roadmaps",
       difficulty: "hard",
       points: 500,
-      earned: userStats.roadmapsCompleted >= 5
+      earned: (userStats.roadmapsCompleted || 0) >= 5
     },
     {
       id: 9,
@@ -166,11 +166,11 @@ export function Achievements({ userStats }: AchievementsProps) {
       icon: Clock,
       category: "Dedication",
       requirement: 100,
-      current: Math.min(userStats.totalStudyTime, 100),
+      current: Math.min(userStats.totalStudyTime || 0, 100),
       type: "time",
       difficulty: "hard",
       points: 400,
-      earned: userStats.totalStudyTime >= 100
+      earned: (userStats.totalStudyTime || 0) >= 100
     }
   ]
 
